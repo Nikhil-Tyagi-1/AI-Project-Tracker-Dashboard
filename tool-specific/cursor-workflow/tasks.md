@@ -4,30 +4,31 @@
 
 Each task is independently completable. Complete milestones in order unless a task explicitly allows parallel work.
 
-**Legend:** `[BE]` backend · `[FE]` frontend · `[TEST]` testing · `[DOC]` documentation · `[OPS]` deployment/ops · `[STRETCH]` optional
+**Legend:** `[BE]` backend · `[FE]` frontend · `[TEST]` testing · `[DOC]` documentation · `[OPS]` deployment/ops · `[STRETCH]` optional  
+**Note:** Tasks marked `[x]` are ready for review.
 
 ---
 
 ## Milestone 0 — Repository & foundations
 
-- [ ] `[OPS]` Initialize monorepo or sibling `frontend` / `backend` apps with agreed package managers
-- [ ] `[BE]` Scaffold Express + TypeScript backend with `src/{controllers,routes,services,prisma,middleware,validators}`
-- [ ] `[FE]` Scaffold Next.js 16 (App Router) + TypeScript frontend with `src/{app,components,features,hooks,services,store,types,constants,utils}`
-- [ ] `[FE]` Add Material UI, Redux Toolkit, React Hook Form, Zod, Axios dependencies (pin versions)
-- [ ] `[BE]` Add Prisma, Zod, and Express-related TypeScript tooling (pin versions)
-- [ ] `[OPS]` Add root/workspace scripts to run frontend and backend in development
-- [ ] `[OPS]` Add `.env.example` files for frontend and backend (no secrets)
-- [ ] `[OPS]` Add `.gitignore` covering `node_modules`, `.env`, SQLite DB files, build outputs
-- [ ] `[DOC]` Write initial README with repo layout and how to install dependencies
+- [x] `[OPS]` Initialize monorepo or sibling `frontend` / `backend` apps with agreed package managers
+- [x] `[BE]` Scaffold Express + TypeScript backend with `src/{controllers,routes,services,prisma,middleware,validators}`
+- [x] `[FE]` Scaffold Next.js 16 (App Router) + TypeScript frontend with `src/{app,components,features,hooks,services,store,types,constants,utils}`
+- [x] `[FE]` Add Material UI, Redux Toolkit, React Hook Form, Zod, Axios dependencies (pin versions)
+- [x] `[BE]` Add Prisma, Zod, and Express-related TypeScript tooling (pin versions)
+- [x] `[OPS]` Add root/workspace scripts to run frontend and backend in development
+- [x] `[OPS]` Add `.env.example` files for frontend and backend (no secrets)
+- [x] `[OPS]` Add `.gitignore` covering `node_modules`, `.env`, SQLite DB files, build outputs
+- [x] `[DOC]` Write initial README with repo layout and how to install dependencies
 
 ---
 
 ## Milestone 1 — Data model & API platform
 
-- [ ] `[BE]` Define Prisma schema for `Project` and `Task` (and optional `User` / `Activity` if chosen)
-- [ ] `[BE]` Add enums for project status, task status, and priority per `spec.md`
-- [ ] `[BE]` Run initial migration and verify SQLite database file creation
-- [ ] `[BE]` Create Prisma client singleton module
+- [x] `[BE]` Define Prisma schema for `Project` and `Task` (and optional `User` / `Activity` if chosen)
+- [x] `[BE]` Add enums for project status, task status, and priority per `spec.md`
+- [x] `[BE]` Run initial migration and verify SQLite database file creation
+- [x] `[BE]` Create Prisma client singleton module
 - [ ] `[BE]` Implement shared success/error response helpers matching the standard envelope
 - [ ] `[BE]` Implement centralized error-handling middleware (`VALIDATION_ERROR`, `NOT_FOUND`, `CONFLICT`, `INTERNAL_ERROR`)
 - [ ] `[BE]` Implement request logging middleware (minimal)
@@ -170,7 +171,6 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [ ] `[DOC]` Maintain prompt-history folder
 - [ ] `[DOC]` Add reflection.md
 - [ ] `[DOC]` Add pull-request-description.md
-
 
 ---
 
