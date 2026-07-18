@@ -111,13 +111,19 @@ export type {
 } from "@/store/slices/tasksSlice";
 
 export {
+  clearActivityError,
   clearDashboardErrors,
   clearInsightsError,
   clearSummaryError,
   dashboardReducer,
+  fetchDashboardActivity,
   fetchDashboardInsights,
   fetchDashboardSummary,
   resetDashboard,
+  selectDashboardActivity,
+  selectDashboardActivityError,
+  selectDashboardActivityLoading,
+  selectDashboardActivityStatus,
   selectDashboardCharts,
   selectDashboardInsights,
   selectDashboardInsightsError,

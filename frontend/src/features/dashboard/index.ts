@@ -10,6 +10,10 @@ export { ProjectProgressChart } from "@/features/dashboard/components/charts/Pro
 export { TaskStatusChart } from "@/features/dashboard/components/charts/TaskStatusChart";
 export { TeamWorkloadChart } from "@/features/dashboard/components/charts/TeamWorkloadChart";
 export { MonthlyActivityChart } from "@/features/dashboard/components/charts/MonthlyActivityChart";
+export { InsightCard } from "@/features/dashboard/components/InsightCard";
+export { SmartInsightsPanel } from "@/features/dashboard/components/SmartInsightsPanel";
+export { RecentActivitySection } from "@/features/dashboard/components/RecentActivitySection";
+export { deriveRecentActivity } from "@/features/dashboard/deriveRecentActivity";
 export {
   DASHBOARD_METRIC_DEFINITIONS,
   formatMetricValue,

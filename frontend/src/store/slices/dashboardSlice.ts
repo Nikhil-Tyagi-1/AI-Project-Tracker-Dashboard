@@ -1,8 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+import { deriveRecentActivity } from "@/features/dashboard/deriveRecentActivity";
 import * as dashboardApi from "@/services/api/dashboard";
+import * as projectsApi from "@/services/api/projects";
+import * as tasksApi from "@/services/api/tasks";
 import type { RequestStatus } from "@/store/slices/projectsSlice";
 import type {
+  ActivityItem,
   DashboardCharts,
   DashboardInsights,
   DashboardMetrics,
@@ -14,20 +18,26 @@ export type DashboardState = {
   metrics: DashboardMetrics | null;
   charts: DashboardCharts | null;
   insights: DashboardInsights | null;
+  activity: ActivityItem[];
   summaryStatus: RequestStatus;
   insightsStatus: RequestStatus;
+  activityStatus: RequestStatus;
   summaryError: string | null;
   insightsError: string | null;
+  activityError: string | null;
 };
 
 const initialState: DashboardState = {
   metrics: null,
   charts: null,
   insights: null,
+  activity: [],
   summaryStatus: "idle",
   insightsStatus: "idle",
+  activityStatus: "idle",
   summaryError: null,
   insightsError: null,
+  activityError: null,
 };
 
 // ---------------------------------------------------------------------------
@@ -60,6 +70,39 @@ export const fetchDashboardInsights = createAsyncThunk(
   },
 );
 
+/**
+ * Recent activity is derived from recent project/task updates (no activity API).
+ */
+export const fetchDashboardActivity = createAsyncThunk(
+  "dashboard/fetchActivity",
+  async (_, { rejectWithValue }) => {
+    try {
+      const [projectsResult, tasksResult] = await Promise.all([
+        projectsApi.getProjects({
+          sortBy: "updatedAt",
+          sortOrder: "desc",
+          page: 1,
+          pageSize: 10,
+          includeArchived: false,
+        }),
+        tasksApi.getTasks({
+          sortBy: "updatedAt",
+          sortOrder: "desc",
+          page: 1,
+          pageSize: 20,
+          includeArchived: false,
+        }),
+      ]);
+
+      return deriveRecentActivity(projectsResult.data, tasksResult.data, 10);
+    } catch (error) {
+      return rejectWithValue(
+        getApiErrorMessage(error, "Failed to load recent activity"),
+      );
+    }
+  },
+);
+
 // ---------------------------------------------------------------------------
 // Slice
 // ---------------------------------------------------------------------------
@@ -74,9 +117,13 @@ const dashboardSlice = createSlice({
     clearInsightsError(state) {
       state.insightsError = null;
     },
+    clearActivityError(state) {
+      state.activityError = null;
+    },
     clearDashboardErrors(state) {
       state.summaryError = null;
       state.insightsError = null;
+      state.activityError = null;
     },
     resetDashboard() {
       return initialState;
@@ -116,6 +163,22 @@ const dashboardSlice = createSlice({
           (action.payload as string | undefined) ??
           action.error.message ??
           "Failed to load dashboard insights";
+      })
+
+      .addCase(fetchDashboardActivity.pending, (state) => {
+        state.activityStatus = "loading";
+        state.activityError = null;
+      })
+      .addCase(fetchDashboardActivity.fulfilled, (state, action) => {
+        state.activityStatus = "succeeded";
+        state.activity = action.payload;
+      })
+      .addCase(fetchDashboardActivity.rejected, (state, action) => {
+        state.activityStatus = "failed";
+        state.activityError =
+          (action.payload as string | undefined) ??
+          action.error.message ??
+          "Failed to load recent activity";
       });
   },
 });
@@ -123,6 +186,7 @@ const dashboardSlice = createSlice({
 export const {
   clearSummaryError,
   clearInsightsError,
+  clearActivityError,
   clearDashboardErrors,
   resetDashboard,
 } = dashboardSlice.actions;
@@ -142,6 +206,9 @@ export const selectDashboardCharts = (state: { dashboard: DashboardState }) =>
 export const selectDashboardInsights = (state: {
   dashboard: DashboardState;
 }) => state.dashboard.insights;
+export const selectDashboardActivity = (state: {
+  dashboard: DashboardState;
+}) => state.dashboard.activity;
 export const selectDashboardSummaryStatus = (state: {
   dashboard: DashboardState;
 }) => state.dashboard.summaryStatus;
@@ -160,3 +227,12 @@ export const selectDashboardInsightsError = (state: {
 export const selectDashboardInsightsLoading = (state: {
   dashboard: DashboardState;
 }) => state.dashboard.insightsStatus === "loading";
+export const selectDashboardActivityStatus = (state: {
+  dashboard: DashboardState;
+}) => state.dashboard.activityStatus;
+export const selectDashboardActivityError = (state: {
+  dashboard: DashboardState;
+}) => state.dashboard.activityError;
+export const selectDashboardActivityLoading = (state: {
+  dashboard: DashboardState;
+}) => state.dashboard.activityStatus === "loading";

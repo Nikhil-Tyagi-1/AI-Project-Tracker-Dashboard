@@ -7,6 +7,8 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DashboardView } from "@/features/dashboard/DashboardView";
 import * as dashboardApi from "@/services/api/dashboard";
+import * as projectsApi from "@/services/api/projects";
+import * as tasksApi from "@/services/api/tasks";
 import { dashboardReducer } from "@/store/slices/dashboardSlice";
 import { uiReducer } from "@/store/slices/uiSlice";
 import type { DashboardSummary } from "@/types/dashboard";
@@ -14,6 +16,14 @@ import type { DashboardSummary } from "@/types/dashboard";
 vi.mock("@/services/api/dashboard", () => ({
   getDashboardSummary: vi.fn(),
   getDashboardInsights: vi.fn(),
+}));
+
+vi.mock("@/services/api/projects", () => ({
+  getProjects: vi.fn(),
+}));
+
+vi.mock("@/services/api/tasks", () => ({
+  getTasks: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -126,6 +136,18 @@ function renderDashboard() {
 describe("DashboardView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(dashboardApi.getDashboardInsights).mockResolvedValue({
+      insights: [],
+      generatedAt: "2026-07-18T08:30:00.000Z",
+    });
+    vi.mocked(projectsApi.getProjects).mockResolvedValue({
+      data: [],
+      meta: { total: 0, page: 1, pageSize: 10 },
+    });
+    vi.mocked(tasksApi.getTasks).mockResolvedValue({
+      data: [],
+      meta: { total: 0, page: 1, pageSize: 20 },
+    });
   });
 
   it("renders metric cards from /dashboard/summary", async () => {

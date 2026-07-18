@@ -65,8 +65,25 @@ export type DashboardInsight = {
   category: InsightCategory;
 };
 
-/** Payload from GET /api/dashboard/insights (consumed in a later milestone). */
+/** Payload from GET /api/dashboard/insights. */
 export type DashboardInsights = {
   insights: DashboardInsight[];
   generatedAt: string;
+};
+
+/** Derived recent-activity feed item (no dedicated activity API in MVP). */
+export type ActivityEntityType = "project" | "task";
+
+export type ActivityAction = "created" | "updated";
+
+export type ActivityItem = {
+  id: string;
+  entityType: ActivityEntityType;
+  action: ActivityAction;
+  title: string;
+  /** Supporting context (e.g. project name, owner). */
+  subtitle?: string;
+  /** Optional deep link into the app. */
+  href?: string;
+  occurredAt: string;
 };

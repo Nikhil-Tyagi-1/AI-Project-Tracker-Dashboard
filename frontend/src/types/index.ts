@@ -37,6 +37,9 @@ export type {
 } from "@/types/task";
 export type {
   ChartDataPoint,
+  ActivityAction,
+  ActivityEntityType,
+  ActivityItem,
   DashboardCharts,
   DashboardInsight,
   DashboardInsights,

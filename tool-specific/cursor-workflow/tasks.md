@@ -137,8 +137,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Add Task Status pie/donut chart
 - [x] `[FE]` Add Team Workload bar chart
 - [x] `[FE]` Add Monthly Activity line chart
-- [ ] `[FE]` Add recent activity list (API or derived/mock feed)
-- [ ] `[FE]` Add Smart Insights panel from `/dashboard/insights`
+- [x] `[FE]` Add recent activity list (API or derived/mock feed)
+- [x] `[FE]` Add Smart Insights panel from `/dashboard/insights`
 - [x] `[FE]` Build Analytics page (deeper chart/layout view; may reuse dashboard widgets)
 - [x] `[FE]` Add skeletons, empty, and error states for all dashboard/analytics sections
 - [x] `[FE]` Ensure charts reflow responsively without horizontal page overflow
