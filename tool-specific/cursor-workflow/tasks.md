@@ -89,8 +89,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Configure Axios API client with base URL from env
 - [x] `[FE]` Configure Redux Toolkit store scaffolding
 - [x] `[FE]` Add shared constants/enums mirroring backend status and priority values
-- [ ] `[FE]` Add basic 404 `not-found` page
-- [ ] `[DOC]` Document frontend folder conventions and theme usage
+- [x] `[FE]` Add basic 404 `not-found` page
+- [x] `[DOC]` Document frontend folder conventions and theme usage
 
 ---
 
