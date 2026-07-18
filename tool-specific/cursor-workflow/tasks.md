@@ -29,13 +29,13 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[BE]` Add enums for project status, task status, and priority per `spec.md`
 - [x] `[BE]` Run initial migration and verify SQLite database file creation
 - [x] `[BE]` Create Prisma client singleton module
-- [ ] `[BE]` Implement shared success/error response helpers matching the standard envelope
-- [ ] `[BE]` Implement centralized error-handling middleware (`VALIDATION_ERROR`, `NOT_FOUND`, `CONFLICT`, `INTERNAL_ERROR`)
-- [ ] `[BE]` Implement request logging middleware (minimal)
-- [ ] `[BE]` Add health check route `GET /api/health`
-- [ ] `[BE]` Seed database with demo projects, tasks, owners, and assignees
-- [ ] `[DOC]` Document database entities and how to migrate/seed
-- [ ] `[TEST]` Add a smoke test that health endpoint returns success
+- [x] `[BE]` Implement shared success/error response helpers matching the standard envelope
+- [x] `[BE]` Implement centralized error-handling middleware (`VALIDATION_ERROR`, `NOT_FOUND`, `CONFLICT`, `INTERNAL_ERROR`)
+- [x] `[BE]` Implement request logging middleware (minimal)
+- [x] `[BE]` Add health check route `GET /api/health`
+- [x] `[BE]` Seed database with demo projects, tasks, owners, and assignees
+- [x] `[DOC]` Document database entities and how to migrate/seed
+- [x] `[TEST]` Add a smoke test that health endpoint returns success
 
 ---
 
@@ -79,15 +79,15 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 5 — Frontend shell & design system
 
-- [ ] `[FE]` Configure MUI theme tokens (primary/secondary, typography, spacing, elevation, radius)
+- [x] `[FE]` Configure MUI theme tokens (primary/secondary, typography, spacing, elevation, radius)
 - [ ] `[FE]` Build app shell: top bar, side navigation, content area
 - [ ] `[FE]` Add nav links for Dashboard, Projects, Kanban, Analytics, Settings
 - [ ] `[FE]` Implement responsive drawer navigation for tablet/mobile breakpoints
 - [ ] `[FE]` Add global toast notification host
 - [ ] `[FE]` Add shared Skeleton, EmptyState, ErrorState, and ConfirmDialog components
-- [ ] `[FE]` Configure Axios API client with base URL from env
-- [ ] `[FE]` Configure Redux Toolkit store scaffolding
-- [ ] `[FE]` Add shared constants/enums mirroring backend status and priority values
+- [x] `[FE]` Configure Axios API client with base URL from env
+- [x] `[FE]` Configure Redux Toolkit store scaffolding
+- [x] `[FE]` Add shared constants/enums mirroring backend status and priority values
 - [ ] `[FE]` Add basic 404 `not-found` page
 - [ ] `[DOC]` Document frontend folder conventions and theme usage
 
