@@ -383,9 +383,12 @@ Quick reference:
 | [docs/database.md](docs/database.md) | Entities, migrate, seed |
 | [docs/testing.md](docs/testing.md) | Unit/integration tests and ephemeral DB |
 | [docs/frontend/conventions.md](docs/frontend/conventions.md) | Frontend folder & theme conventions |
+| [docs/features/](docs/features/README.md) | Feature docs index |
 | [docs/features/projects.md](docs/features/projects.md) | Projects UI flows |
 | [docs/features/kanban.md](docs/features/kanban.md) | Kanban behavior & failure handling |
-| [docs/features/dashboard.md](docs/features/dashboard.md) | Dashboard, charts, insights |
+| [docs/features/dashboard.md](docs/features/dashboard.md) | Dashboard metrics, charts, insights |
+| [docs/features/analytics.md](docs/features/analytics.md) | Analytics expanded charts |
+| [docs/features/settings.md](docs/features/settings.md) | Settings placeholder |
 | [tool-specific/cursor-workflow/project-context.md](tool-specific/cursor-workflow/project-context.md) | Business context & architecture |
 | [tool-specific/cursor-workflow/spec.md](tool-specific/cursor-workflow/spec.md) | Software specification |
 | [tool-specific/cursor-workflow/acceptance-criteria.md](tool-specific/cursor-workflow/acceptance-criteria.md) | Given/When/Then acceptance criteria |

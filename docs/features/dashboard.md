@@ -1,28 +1,35 @@
-# Dashboard & Analytics
+# Dashboard feature
 
-> **App routes:** `/dashboard`, `/analytics` (`/` redirects to `/dashboard`)  
+> **App routes:** `/dashboard` (`/` redirects here)  
 > **API:** [`docs/api/dashboard.md`](../api/dashboard.md)  
-> **Related:** [`frontend conventions`](../frontend/conventions.md), [`Projects`](./projects.md), [`Kanban & Tasks`](./kanban.md)
+> **Related features:** [`Analytics`](./analytics.md) · [`Projects`](./projects.md) · [`Kanban`](./kanban.md) · [`Settings`](./settings.md)  
+> **Frontend conventions:** [`docs/frontend/conventions.md`](../frontend/conventions.md)
 
-The Dashboard and Analytics features are the portfolio health surfaces for AI Project Tracker Pro. Dashboard combines summary metric cards, reusable chart widgets, Smart Insights, and a recent-activity feed. Analytics reuses the same chart widgets in an expanded layout for deeper reading. Both pages read chart-ready aggregates from `GET /api/dashboard/summary`; Insights use a separate mock endpoint so failures stay section-local.
+The Dashboard is the portfolio health home for AI Project Tracker Pro. It combines summary metric cards, reusable chart widgets, mock Smart Insights, and a recent-activity feed. Chart-ready aggregates come from `GET /api/dashboard/summary`; Insights use a separate mock endpoint so failures stay section-local.
+
+> **Authentication:** JWT / session auth is **outside the MVP** unless Stretch Auth is implemented. Dashboard APIs and UI are open for local evaluation.
 
 ---
 
-## Main flows
+## Purpose
+
+Give managers and stakeholders an at-a-glance view of portfolio health—counts by status, task progress, workload, activity trends, and deterministic “Smart Insights”—without leaving the app ([`project-context.md`](../../tool-specific/cursor-workflow/project-context.md) §4.3 / §4.6, [`spec.md`](../../tool-specific/cursor-workflow/spec.md) §3.3).
+
+---
+
+## User flow
 
 | Flow | Entry | Outcome |
 |------|-------|---------|
 | Open Dashboard | Side nav → **Dashboard**, or `/` | Metrics, charts, insights, recent activity |
-| Open Analytics | Side nav → **Analytics** | Four portfolio charts (expanded layout) |
-| Retry summary | `ErrorState` → **Try again** | Re-dispatches `fetchDashboardSummary` |
+| Retry summary | Metrics/charts `ErrorState` → **Try again** | Re-dispatches `fetchDashboardSummary` |
 | Retry insights | Insights `ErrorState` → **Try again** | Re-dispatches `fetchDashboardInsights` only |
+| Retry activity | Activity `ErrorState` → **Try again** | Re-dispatches `fetchDashboardActivity` |
 | Empty portfolio CTA | Empty state → **Create project** | Navigates to `/projects/new` |
+| Follow activity link | Recent activity item | Project detail or Kanban for that project |
+| Deeper charts | Side nav → **Analytics** | See [`analytics.md`](./analytics.md) |
 
-State lives in the Redux `dashboard` slice (`summary` / `insights` / `activity` status). HTTP goes through `services/api/dashboard.ts` (plus projects/tasks clients for the derived activity feed) on the shared Axios client.
-
----
-
-## Dashboard architecture
+### Architecture
 
 ```text
 DashboardView
@@ -32,185 +39,92 @@ DashboardView
 └── RecentActivitySection  ← derived from GET /projects + GET /tasks
 ```
 
-### Data loading
-
-On mount, `DashboardView` dispatches **three independent** thunks:
-
-| Thunk | Source | Feeds |
-|-------|--------|-------|
-| `fetchDashboardSummary` | `GET /api/dashboard/summary` | Metric cards + charts |
-| `fetchDashboardInsights` | `GET /api/dashboard/insights` | Smart Insights cards |
-| `fetchDashboardActivity` | `GET /api/projects` + `GET /api/tasks` (sorted by `updatedAt`) | Recent activity list |
-
-Insights and activity failures do **not** clear metrics/charts. Summary failure shows a page-level `ErrorState` for the metrics/charts block, while insights/activity sections can still succeed or fail on their own.
-
-### Layout
-
-1. Page title + short description  
-2. Eight metric cards (MUI Grid: 1 / 2 / 4 columns)  
-3. Chart grid (`compact` — 2×2 from `md` up)  
-4. Smart Insights (≈7 cols) + Recent Activity (≈5 cols) from `lg` up; stacked on smaller screens  
-
-Overflow guards: page and grid items use `minWidth: 0`, `maxWidth: 100%`, and `overflowX: hidden`. Charts use Recharts `ResponsiveContainer` inside fixed-height panels.
+On mount, three **independent** thunks run so Insights/activity failures do not clear metrics/charts.
 
 ---
 
-## Analytics architecture
+## Backend endpoints used
 
-```text
-AnalyticsView
-└── ChartsGrid (expanded)  ← same /dashboard/summary charts payload
-```
+| Method | Path | Used for |
+|--------|------|----------|
+| `GET` | `/api/dashboard/summary` | Metric cards + chart series |
+| `GET` | `/api/dashboard/insights` | Mock Smart Insights cards |
+| `GET` | `/api/projects` | Recent activity derivation |
+| `GET` | `/api/tasks` | Recent activity derivation |
 
-Analytics is a **chart-focused** composition of the same widgets. It only dispatches `fetchDashboardSummary` (no insights or activity on this route).
-
-| Detail | Behavior |
-|--------|----------|
-| Layout variant | `ChartsGrid` `variant="expanded"` — wider progress/activity rows on large screens |
-| Chart height | `320px` plot area (Dashboard uses the default `280px`) |
-| Empty portfolio | Page-level **No analytics yet** plus per-chart empty panels |
-| Error | Page-level `ErrorState` + retry for summary failure |
+Payload contracts: [`docs/api/dashboard.md`](../api/dashboard.md). Insights are **deterministic heuristics** over current DB data—no external LLM (spec FR-D04).
 
 ---
 
-## Metric cards
+## Main frontend components
 
-Eight cards map 1:1 to `data.metrics` from the summary API:
+| Component | Role |
+|-----------|------|
+| `DashboardView` | Page composition and thunk dispatch |
+| `MetricCard` / `MetricsGrid` | Eight summary metric cards |
+| `ChartsGrid` (`compact`) | 2×2 chart layout |
+| `ChartPanel` | Title, empty chrome, overflow containment |
+| `ProjectProgressChart` | Horizontal progress bars |
+| `TaskStatusChart` | Donut by task status |
+| `TeamWorkloadChart` | Bar by assignee |
+| `MonthlyActivityChart` | Dual line (created / updated) |
+| `SmartInsightsPanel` / `InsightCard` | Mock recommendations |
+| `RecentActivitySection` | Derived activity feed |
+| Skeletons | Metrics, charts, insights, activity |
+| Shared UI | `EmptyState`, `ErrorState`, `Skeleton` |
 
-| Card | Field |
-|------|-------|
-| Total Projects | `totalProjects` |
-| Active Projects | `activeProjects` (`IN_PROGRESS`) |
-| Completed Projects | `completedProjects` |
-| At Risk Projects | `atRiskProjects` |
-| Total Tasks | `totalTasks` |
-| Completed Tasks | `completedTasks` |
-| Pending Tasks | `pendingTasks` |
-| Completion Percentage | `completionPercentage` (shown with `%`) |
-
-Definitions live in `metricDefinitions.ts` so labels/formatting stay shared between UI and tests. Presentation is `MetricCard` + `MetricsGrid`.
-
-Archived projects/tasks are excluded server-side (see API docs).
-
----
-
-## Chart data contracts
-
-Frontend types mirror the backend payload in [`docs/api/dashboard.md`](../api/dashboard.md). Charts expect **chart-ready** series — no extra aggregation in the UI.
-
-### Shared point shapes
-
-| Type | Shape | Used by |
-|------|-------|---------|
-| `ChartDataPoint` | `{ label: string, value: number }` | Project Progress, Task Status, Team Workload |
-| `MonthlyActivityPoint` | `{ label: string, created: number, updated: number }` | Monthly Activity |
-
-### Series
-
-| Chart widget | `data.charts.*` | Visualization | Empty when |
-|--------------|-----------------|---------------|------------|
-| `ProjectProgressChart` | `projectProgress` | Horizontal bar (0–100%) | Array empty or all zeros |
-| `TaskStatusChart` | `taskStatusDistribution` | Donut | All four status values are `0` |
-| `TeamWorkloadChart` | `teamWorkload` | Vertical bar | Array empty or all zeros |
-| `MonthlyActivityChart` | `monthlyActivity` | Dual line (created / updated) | All months have `created = 0` and `updated = 0` |
-
-**Stability notes (API):**
-
-- Task status always returns four labeled points (`To Do`, `In Progress`, `In Review`, `Done`).  
-- Monthly activity always returns the last six `YYYY-MM` months (UTC), including zeros.  
-- Chart keys are always present (never `null`) so empty UI is driven by values, not missing fields.
-
-Colors come from `chartPalette` / status tokens (`constants/charts.ts`, `theme/tokens.ts`) — not hardcoded hex in widgets.
-
-Helpers: `isValueSeriesEmpty`, `isMonthlyActivityEmpty`, `truncateChartLabel`, `formatMonthLabel` in `chartUtils.ts`.
+Helpers: `metricDefinitions.ts`, `chartUtils.ts`, `deriveRecentActivity.ts`, `insightPresentation.ts`.  
+Client: `frontend/src/services/api/dashboard.ts`.
 
 ---
 
-## Smart Insights mock behavior
+## Redux slices
 
-Insights are **deterministic heuristics** over current DB aggregates. The backend does **not** call an external LLM (spec FR-D04).
+**Slice:** `dashboard` — `frontend/src/store/slices/dashboardSlice.ts`
 
-### Request
+| Concern | Thunk | Status fields |
+|---------|-------|---------------|
+| Summary | `fetchDashboardSummary` | metrics + charts loading/error/data |
+| Insights | `fetchDashboardInsights` | insights loading/error/data |
+| Activity | `fetchDashboardActivity` | activity loading/error/items |
 
-`GET /api/dashboard/insights` → `{ insights: DashboardInsight[], generatedAt: string }`
-
-### Insight card fields
-
-| Field | Meaning |
-|-------|---------|
-| `id` | Stable id (e.g. `insight-at-risk`) |
-| `severity` | `info` \| `warning` \| `critical` |
-| `title` | Short headline |
-| `message` | Recommendation copy |
-| `category` | `risk` \| `workload` \| `progress` \| `deadline` \| `portfolio` |
-
-### Heuristics (summary)
-
-| `id` | Fires when (approx.) |
-|------|----------------------|
-| `insight-at-risk` | `atRiskProjects > 0` |
-| `insight-low-completion` | Task completion &lt; 40% |
-| `insight-strong-completion` | Task completion ≥ 75% |
-| `insight-workload-imbalance` | Top assignee load ≥ 2× team average (≥ 3 tasks) |
-| `insight-unassigned` | ≥ 3 unassigned tasks |
-| `insight-low-progress` | Active/at-risk projects with progress in (0, 25) |
-| `insight-overdue` | Non-`DONE` tasks with past `dueDate` |
-| `insight-empty-portfolio` | `totalProjects === 0` |
-| `insight-no-tasks` | Exactly one project and zero tasks |
-
-An empty `insights` array is a **success empty state** (“No insights right now”), not an error. Full details: [`docs/api/dashboard.md`](../api/dashboard.md#insight-heuristics-mock).
-
-### UI failure isolation (AC-I02)
-
-If Insights fail, `SmartInsightsPanel` shows a section-level `ErrorState` with retry. Metrics, charts, and recent activity remain interactive.
+Failures are isolated per concern: Insights/activity errors do not wipe summary state (AC-I02).
 
 ---
 
-## Recent activity
+## Validation
 
-There is no dedicated activity-log API in MVP. `fetchDashboardActivity` loads recent projects and tasks, then `deriveRecentActivity` builds feed items:
+Dashboard reads are aggregate endpoints; there is **no create/update form** on this page.
 
-- Project/task **created** at `createdAt`  
-- Project/task **updated** at `updatedAt` when it differs from `createdAt`  
-- Sorted newest-first, capped (default 10)  
-- Links to project detail or Kanban for the task’s project  
+| Layer | Notes |
+|-------|--------|
+| Client | Types in `frontend/src/types/dashboard.ts` mirror API shapes |
+| Server | Controllers/services validate query/path as applicable; aggregates exclude archived projects/tasks |
 
-Empty feed → shared `EmptyState` (“No recent activity”).
-
----
-
-## Widget reuse strategy
-
-| Widget | Dashboard | Analytics | Notes |
-|--------|-----------|-----------|-------|
-| `MetricCard` / `MetricsGrid` | Yes | No | Metrics stay on Dashboard only |
-| `ProjectProgressChart` | Yes | Yes | Same component, data props only |
-| `TaskStatusChart` | Yes | Yes | Donut |
-| `TeamWorkloadChart` | Yes | Yes | Bar |
-| `MonthlyActivityChart` | Yes | Yes | Dual line |
-| `ChartsGrid` | `compact` | `expanded` | Single grid composer |
-| `ChartPanel` | Yes | Yes | Title, empty chrome, overflow containment |
-| `SmartInsightsPanel` / `InsightCard` | Yes | No | Insights are Dashboard-only |
-| `RecentActivitySection` | Yes | No | Dashboard-only |
-| Skeletons | Yes | Charts skeleton | Shared `Skeleton` primitive |
-
-**Reuse rules:**
-
-1. Chart components accept **data props only** (no page-level fetching).  
-2. Pages own fetch + Redux selection and pass `charts` / `metrics` down.  
-3. Layout differences go through `ChartsGrid` `variant` / `chartHeight`, not forked chart files.  
-4. Empty/error/loading use shared `@/components/ui` primitives (`Skeleton`, `EmptyState`, `ErrorState`) at page or section level.
+Chart widgets treat empty series as empty UI (not validation errors). See chart empty rules in [`docs/api/dashboard.md`](../api/dashboard.md) and `chartUtils.ts`.
 
 ---
 
-## UX states
+## Error handling
 
-| Surface | Loading | Empty | Error |
+| Section | Loading | Empty | Error |
 |---------|---------|-------|-------|
-| Dashboard metrics + charts | Metrics + charts skeletons | Zero cards + per-chart empty; **No projects yet** when `totalProjects === 0` | Page `ErrorState` + retry (summary) |
-| Smart Insights | Insights skeleton | **No insights right now** | Section `ErrorState` + retry (rest of page usable) |
-| Recent activity | Activity skeleton | **No recent activity** | Section `ErrorState` + retry |
-| Analytics charts | Charts skeleton | Per-chart empty + **No analytics yet** | Page `ErrorState` + retry |
+| Metrics + charts | Skeletons | Zero cards + per-chart empty; **No projects yet** when `totalProjects === 0` | Page `ErrorState` + retry (summary) |
+| Smart Insights | Skeleton | **No insights right now** (success empty) | Section `ErrorState` + retry; rest of page usable |
+| Recent activity | Skeleton | **No recent activity** | Section `ErrorState` + retry |
+
+Toasts are not required for read-only load failures; visible `ErrorState` + retry satisfies AC-D03 / AC-I02.
+
+Acceptance coverage: [`acceptance-criteria.md`](../../tool-specific/cursor-workflow/acceptance-criteria.md) AC-D01–AC-D04, AC-C01–AC-C04, AC-I01–AC-I02.
+
+---
+
+## Future improvements
+
+- First-class activity-log API instead of derived project/task timestamps
+- Live AI insights via a provider (currently mock only)
+- Saved dashboard views and date-range filters
+- Optional JWT-gated analytics endpoints (Stretch Auth)
 
 ---
 
@@ -219,7 +133,6 @@ Empty feed → shared `EmptyState` (“No recent activity”).
 ```text
 frontend/src/features/dashboard/
   DashboardView.tsx
-  AnalyticsView.tsx
   metricDefinitions.ts
   chartUtils.ts
   deriveRecentActivity.ts
@@ -237,31 +150,30 @@ frontend/src/features/dashboard/
       TaskStatusChart.tsx
       TeamWorkloadChart.tsx
       MonthlyActivityChart.tsx
-      DashboardChartsSkeleton.tsx
 frontend/src/services/api/dashboard.ts
 frontend/src/store/slices/dashboardSlice.ts
-frontend/src/types/dashboard.ts
 frontend/src/app/(app)/dashboard/page.tsx
-frontend/src/app/(app)/analytics/page.tsx
 ```
+
+---
+
+## Cross-references
+
+| Document | Relevance |
+|----------|-----------|
+| [`project-context.md`](../../tool-specific/cursor-workflow/project-context.md) | Dashboard, AI Insights, charts |
+| [`spec.md`](../../tool-specific/cursor-workflow/spec.md) | FR-D*, charts §11, API §7.4 |
+| [`acceptance-criteria.md`](../../tool-specific/cursor-workflow/acceptance-criteria.md) | AC-D*, AC-C*, AC-I* |
+| [`tasks.md`](../../tool-specific/cursor-workflow/tasks.md) | Milestone 4 (API), Milestone 8 (UI) |
+| [`analytics.md`](./analytics.md) | Expanded chart-only page |
 
 ---
 
 ## How to test locally
 
 ```bash
-# API + seed data recommended so summary/insights are non-empty
 npm run dev:backend
 npm run dev:frontend
 
-# Dashboard / Analytics unit + component tests
 cd frontend && npm test -- src/features/dashboard
 ```
-
-Covered automated cases include:
-
-- Dashboard and Analytics page render with mocked summary data  
-- Metric cards reflecting mocked API values  
-- Chart widgets rendering mocked datasets (and per-chart empty states)  
-- Smart Insights rendering mocked recommendations  
-- Loading skeletons, empty states, and error/retry (including insights failure isolation)

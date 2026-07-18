@@ -2,133 +2,144 @@
 
 > **App routes:** `/projects`, `/projects/new`, `/projects/:id`, `/projects/:id/edit`  
 > **API:** [`docs/api/projects.md`](../api/projects.md)  
-> **Related:** [`frontend conventions`](../frontend/conventions.md), [`Kanban & Tasks`](./kanban.md), [`Dashboard & Analytics`](./dashboard.md)
+> **Related features:** [`Kanban`](./kanban.md) · [`Dashboard`](./dashboard.md) · [`Analytics`](./analytics.md) · [`Settings`](./settings.md)  
+> **Frontend conventions:** [`docs/frontend/conventions.md`](../frontend/conventions.md)
 
-The Projects feature is the portfolio CRUD surface for AI Project Tracker Pro. Users can search and filter the list, open details, create or edit projects through a shared form, and archive or restore records.
+The Projects feature is the portfolio CRUD surface for AI Project Tracker Pro. Users search and filter the list, open details, create or edit projects through a shared form, and archive or restore records.
+
+> **Authentication:** JWT / session auth is **outside the MVP** unless Stretch Auth is implemented. Project APIs and UI are open for local evaluation.
 
 ---
 
-## Main flows
+## Purpose
+
+Centralize project metadata—name, description, status, priority, owner, dates, progress, and risk notes—so delivery leads can maintain a single system of record and stakeholders can assess portfolio health (see [`project-context.md`](../../tool-specific/cursor-workflow/project-context.md) §4.2 and [`spec.md`](../../tool-specific/cursor-workflow/spec.md) §3.1).
+
+---
+
+## User flow
 
 | Flow | Entry | Outcome |
 |------|-------|---------|
 | List | Side nav → **Projects** | Paginated table (desktop) or cards (mobile) |
+| Search / filter / sort | List toolbar | Debounced `q`, AND filters, `sortBy` / `sortOrder` |
 | Create | **New project** on list / empty state | Form → `POST /api/projects` → detail |
 | Detail | Row/card click | Metadata, task summary, actions |
 | Edit | Detail → **Edit project** | Same form → `PATCH /api/projects/:id` → detail |
 | Archive | Detail → **Archive** (confirm) | Soft-delete; removed from default list |
 | Restore | Detail (archived) → **Restore project** | Active again; returns to default list |
-
-State lives in the Redux `projects` slice (`list` / `detail` / `mutation` status + filters). HTTP goes through `services/api/projects.ts` on the shared Axios client.
-
----
-
-## Search
-
-- Control: **Search** field on the Projects list toolbar.
-- Debounced **300ms** before updating Redux `filters.q` and refetching.
-- Maps to API query param `q` (case-insensitive substring on name/description).
-- **Clear (×)** resets the input and query immediately.
-- Empty results with an active query show **No results** (distinct from **No projects yet**).
+| Open board | Detail → **Open Kanban board** | `/kanban?projectId=:id` |
 
 ---
 
-## Filters
+## Backend endpoints used
 
-| Control | Redux / API | Values |
-|---------|-------------|--------|
-| Status | `filters.status` → `status` | Project status enum, or all |
-| Priority | `filters.priority` → `priority` | Priority enum, or all |
-| Owner | `filters.owner` → `owner` | Owner display-name substring (debounced) |
+| Method | Path | Used for |
+|--------|------|----------|
+| `GET` | `/api/projects` | List (search, filter, sort, pagination); owner options on create |
+| `GET` | `/api/projects/:id` | Detail and edit prefill |
+| `POST` | `/api/projects` | Create |
+| `PATCH` | `/api/projects/:id` | Update |
+| `PATCH` | `/api/projects/:id/archive` | Soft-archive |
+| `PATCH` | `/api/projects/:id/restore` | Restore |
+| `GET` | `/api/tasks?projectId=…` | Task summary on detail |
 
-**Reset filters** clears search, status, priority, owner, sort, and pagination back to defaults (`createdAt` / `desc`, page 1, page size 20). Archived projects stay excluded unless a later control sets `includeArchived` (API supports it; default list does not show archived).
-
-Changing a filter resets to page 1 and refetches `GET /api/projects`.
-
----
-
-## Sorting
-
-Toolbar **Sort by** + Asc/Desc toggle. Desktop table headers also toggle sort for:
-
-- Name (`name`)
-- Progress (`progress`)
-- Created date (`createdAt`)
-- Updated date (`updatedAt`)
-
-Clicking the active column flips `sortOrder`. Selecting a new column sorts ascending. Params map to `sortBy` and `sortOrder` on the list API.
+Full request/response examples: [`docs/api/projects.md`](../api/projects.md).
 
 ---
 
-## Create / Edit workflow
+## Main frontend components
 
-Both pages reuse `ProjectForm` (React Hook Form + Zod + MUI).
+| Component / view | Role |
+|------------------|------|
+| `ProjectsListView` | List page: toolbar, table/cards, pagination, states |
+| `ProjectsToolbar` | Search, filters, sort, reset |
+| `ProjectsTable` / `ProjectsCardList` | Desktop table / mobile cards |
+| `ProjectsPagination` | Page controls |
+| `ProjectCreateView` / `ProjectEditView` | Create and edit pages |
+| `ProjectForm` | Shared RHF + Zod + MUI form |
+| `ProjectDetailView` | Metadata, archive/restore, link to Kanban |
+| `ProjectMetadataSection` | Field presentation |
+| `ProjectTaskSummarySection` | Task counts by Kanban status |
+| `ProjectStatusChip` / `ProjectPriorityChip` | Status and priority chips |
+| `ProjectsListSkeleton` | List loading skeleton |
+| Shared UI | `ConfirmDialog`, `EmptyState`, `ErrorState`, toasts |
 
-### Create (`/projects/new`)
+Client: `frontend/src/services/api/projects.ts`.
 
-1. Load owner options from existing projects (`GET /api/projects?pageSize=100`).
-2. Defaults: status `PLANNED`, priority `MEDIUM`, progress `0`.
-3. Client validation (aligned with backend rules) before submit.
-4. Dispatch `createProject` → success toast → navigate to detail.
-5. API/conflict errors surface as error toasts (e.g. duplicate name).
+---
 
-### Edit (`/projects/:id/edit`)
+## Redux slices
 
-1. Load project via `fetchProjectById`.
-2. Prefill form; status select is limited to **allowed transitions** (same matrix as the API).
-3. Save enabled only when the form is dirty.
-4. Dispatch `updateProject` → success toast → detail.
-5. Archived projects cannot be updated until restored (API rejects; UI hides Edit when archived).
+**Slice:** `projects` — `frontend/src/store/slices/projectsSlice.ts`
 
-### Client validation highlights
+| Concern | Contents |
+|---------|----------|
+| `list` | Items, `meta`, loading/error, filters (`q`, status, priority, owner, sort, page) |
+| `detail` | Current project, loading/error |
+| `mutation` | Create/update/archive/restore status |
+
+**Thunks:** `fetchProjects`, `fetchProjectById`, `createProject`, `updateProject`, `archiveProject`, `restoreProject`.
+
+Also uses shared `ui` slice for toasts where wired through toast helpers.
+
+---
+
+## Validation
+
+Client and server rules are mirrored; **server is source of truth** ([`spec.md`](../../tool-specific/cursor-workflow/spec.md) §8).
+
+| Layer | Location |
+|-------|----------|
+| Client | `projectFormSchema.ts` (React Hook Form + Zod) |
+| Server | `backend/src/validators/project.ts` + service transition rules |
+
+### Client highlights
 
 | Field | Rules |
 |-------|--------|
 | Name | Required; trim; 3–100 chars |
 | Owner | Required `ownerId` |
+| Status / priority | Required enums |
 | Progress | Integer 0–100; must be **100** when status is `COMPLETED` |
 | Dates | Optional `yyyy-MM-dd`; if both set, end ≥ start |
 | Description / risk notes | Optional; max 2000 chars |
 
-Tests: `frontend/src/features/projects/projectFormSchema.test.ts` and `ProjectForm.test.tsx`.
+Edit status options are limited to **allowed transitions** (same matrix as the API). Archived projects cannot be updated until restored.
+
+Tests: `projectFormSchema.test.ts`, `ProjectForm.test.tsx`.
 
 ---
 
-## Archive / Restore workflow
+## Error handling
 
-### Archive
+| Situation | Behavior |
+|-----------|----------|
+| Client validation | Field-level errors; no create/update call |
+| API `VALIDATION_ERROR` / `CONFLICT` / `NOT_FOUND` | Error toast and/or form errors; list/detail `ErrorState` + retry |
+| Archive | `ConfirmDialog` required; cancel leaves data unchanged |
+| Restore name conflict | Error toast (`CONFLICT` if another active project reused the name) |
+| Network / unexpected | Error toast or `ErrorState`; UI does not fail silently |
 
-1. On detail, **Archive** opens shared `ConfirmDialog` (destructive).
-2. Cancel leaves the project unchanged.
-3. Confirm dispatches `archiveProject` (`PATCH /api/projects/:id/archive`).
-4. Success toast; detail shows **Archived** chip and warning; Edit is hidden.
-5. Default list and dashboard aggregates exclude the project.
-
-### Restore
-
-1. On an archived detail page, **Restore project** dispatches `restoreProject`.
-2. Success toast; project is active again (Edit / Archive available).
-3. Restore can fail with `CONFLICT` if another non-archived project reused the name while this one was archived — shown as an error toast.
-
----
-
-## Detail page extras
-
-- **Task summary** loads `GET /api/tasks?projectId=…` and shows totals by Kanban status (or empty/error states).
-- **Open Kanban board** links to `/kanban?projectId=:id` — see [`kanban.md`](./kanban.md).
-
----
-
-## UX states
+Loading / empty / error matrix:
 
 | Surface | Loading | Empty | Error |
 |---------|---------|-------|-------|
 | List | Table/card skeleton | No projects yet / No results | `ErrorState` + retry |
 | Detail | Content skeleton | — | `ErrorState` + back to list |
 | Task summary | Skeleton | No tasks yet | Inline `ErrorState` + retry |
-| Forms | Skeleton while owners/project load; button spinner while saving | — | Field errors + toasts |
+| Forms | Skeleton / button spinner | — | Field errors + toasts |
 
-Toasts use the global `ToastProvider` / `useToast` helpers.
+Acceptance coverage: [`acceptance-criteria.md`](../../tool-specific/cursor-workflow/acceptance-criteria.md) AC-P01–AC-P14, AC-S*, AC-F*, AC-U*, AC-V*.
+
+---
+
+## Future improvements
+
+- Live `includeArchived` toggle on the list UI (API already supports the param)
+- Auto-calculate progress from task completion
+- First-class activity timeline on the detail page
+- Optional JWT-protected mutations (Stretch Auth — [`spec.md`](../../tool-specific/cursor-workflow/spec.md) §14 / Milestone 12)
 
 ---
 
@@ -149,13 +160,23 @@ frontend/src/store/slices/projectsSlice.ts
 
 ---
 
+## Cross-references
+
+| Document | Relevance |
+|----------|-----------|
+| [`project-context.md`](../../tool-specific/cursor-workflow/project-context.md) | Goals, project module, folder structure |
+| [`spec.md`](../../tool-specific/cursor-workflow/spec.md) | FR-P*, search/filter, validation §8, pages §12 |
+| [`acceptance-criteria.md`](../../tool-specific/cursor-workflow/acceptance-criteria.md) | AC-P01–AC-P14, AC-S*, AC-F* |
+| [`tasks.md`](../../tool-specific/cursor-workflow/tasks.md) | Milestone 2 (API), Milestone 6 (UI) |
+
+---
+
 ## How to test locally
 
 ```bash
-# API + seed data recommended for owners and list content
 npm run dev:backend
 npm run dev:frontend
 
-# Form validation tests
+# Form / list tests
 npm run test --workspace=frontend
 ```
