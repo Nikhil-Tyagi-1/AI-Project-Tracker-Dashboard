@@ -81,9 +81,9 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 - [x] `[FE]` Configure MUI theme tokens (primary/secondary, typography, spacing, elevation, radius)
 - [x] `[FE]` Configure CssBaseline and AppThemeProvider
-- [ ] `[FE]` Build app shell: top bar, side navigation, content area
-- [ ] `[FE]` Add nav links for Dashboard, Projects, Kanban, Analytics, Settings
-- [ ] `[FE]` Implement responsive drawer navigation for tablet/mobile breakpoints
+- [x] `[FE]` Build app shell: top bar, side navigation, content area
+- [x] `[FE]` Add nav links for Dashboard, Projects, Kanban, Analytics, Settings
+- [x] `[FE]` Implement responsive drawer navigation for tablet/mobile breakpoints
 - [ ] `[FE]` Add global toast notification host
 - [ ] `[FE]` Add shared Skeleton, EmptyState, ErrorState, and ConfirmDialog components
 - [x] `[FE]` Configure Axios API client with base URL from env

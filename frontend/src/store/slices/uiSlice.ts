@@ -9,7 +9,8 @@ type UiState = {
 };
 
 const initialState: UiState = {
-  isNavigationOpen: true,
+  // Temporary drawer starts closed; permanent desktop drawer does not use this flag.
+  isNavigationOpen: false,
 };
 
 const uiSlice = createSlice({
