@@ -8,5 +8,6 @@ export { ProjectPriorityChip } from "@/features/projects/components/ProjectPrior
 export {
   PROJECT_FORM_DEFAULT_VALUES,
   projectFormSchema,
+  validateProjectForm,
 } from "@/features/projects/projectFormSchema";
 export type { ProjectFormValues } from "@/features/projects/projectFormSchema";

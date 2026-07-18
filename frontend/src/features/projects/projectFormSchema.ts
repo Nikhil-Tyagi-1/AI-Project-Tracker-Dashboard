@@ -67,6 +67,10 @@ export const projectFormSchema = z
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 
+/** Safe-parse helper for tests and optional pre-submit checks. */
+export const validateProjectForm = (data: unknown) =>
+  projectFormSchema.safeParse(data);
+
 export const PROJECT_FORM_DEFAULT_VALUES: ProjectFormValues = {
   name: "",
   description: "",

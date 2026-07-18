@@ -26,6 +26,7 @@ See backend docs for migrate/seed. Frontend conventions (folder structure, theme
 ## Documentation
 
 - [Frontend conventions](docs/frontend/conventions.md)
+- [Projects feature](docs/features/projects.md)
 - [Database](docs/database.md)
 - [Projects API](docs/api/projects.md)
 - [Tasks API](docs/api/tasks.md)

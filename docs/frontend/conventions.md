@@ -179,3 +179,10 @@ Feature slices and API modules continue in Milestones 7–8 (tasks, dashboard); 
 | `NEXT_PUBLIC_API_BASE_URL` | Axios `baseURL` (default fallback: `http://localhost:4000/api`) |
 
 Never commit secrets. Only `NEXT_PUBLIC_*` values are available in the browser.
+
+---
+
+## Feature documentation & tests
+
+- Feature usage docs live under `docs/features/` (e.g. [Projects](../features/projects.md)).
+- Frontend unit/component tests use Vitest + Testing Library: `npm run test --workspace=frontend`.
