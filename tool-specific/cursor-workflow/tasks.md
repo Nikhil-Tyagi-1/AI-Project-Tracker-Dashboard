@@ -149,26 +149,26 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 9 — Testing hardening
 
-- [ ] `[TEST]` Backend: expand integration coverage for search, combined filters, and sort
-- [ ] `[TEST]` Backend: cover invalid status transitions and archived-update rejection
-- [ ] `[TEST]` Backend: cover dashboard aggregates with known seed fixtures
-- [ ] `[TEST]` Frontend: test projects filter/search UI state (reset filters)
-- [ ] `[TEST]` Frontend: test Kanban status alternative control updates task
-- [ ] `[TEST]` Add CI-friendly test scripts for backend and frontend
-- [ ] `[OPS]` Ensure tests run against ephemeral/test SQLite DB (not developer personal DB)
-- [ ] `[DOC]` Document how to run unit and integration tests locally
+- [x] `[TEST]` Backend: expand integration coverage for search, combined filters, and sort
+- [x] `[TEST]` Backend: cover invalid status transitions and archived-update rejection
+- [x] `[TEST]` Backend: cover dashboard aggregates with known seed fixtures
+- [x] `[TEST]` Frontend: test projects filter/search UI state (reset filters)
+- [x] `[TEST]` Frontend: test Kanban status alternative control updates task
+- [x] `[TEST]` Add CI-friendly test scripts for backend and frontend
+- [x] `[OPS]` Ensure tests run against ephemeral/test SQLite DB (not developer personal DB)
+- [x] `[DOC]` Document how to run unit and integration tests locally
 
 ---
 
 ## Milestone 10 — Documentation & handoff
 
 - [ ] `[DOC]` Complete root README: prerequisites, install, migrate, seed, run FE/BE, test, env vars
-- [ ] `[DOC]` Add API overview linking to project/task/dashboard examples
-- [ ] `[DOC]` Add feature docs for Projects, Kanban, Dashboard/Analytics, Settings
+- [x] `[DOC]` Add API overview linking to project/task/dashboard examples
+- [x] `[DOC]` Add feature docs for Projects, Kanban, Dashboard/Analytics, Settings — Settings feature doc deferred (page is a placeholder)
 - [ ] `[DOC]` Cross-link `project-context.md`, `spec.md`, `acceptance-criteria.md`, and this task list
-- [ ] `[DOC]` Note Stretch Auth as explicitly out of MVP unless completed
+- [x] `[DOC]` Note Stretch Auth as explicitly out of MVP unless completed — noted in `docs/database.md`
 - [ ] `[DOC]` Record known limitations and future enhancements summary
-- [ ] `[DOC]` Create meaningful Git commits after each completed milestone
+- [x] `[DOC]` Create meaningful Git commits after each completed milestone
 - [ ] `[DOC]` Maintain prompt-history folder
 - [ ] `[DOC]` Add reflection.md
 - [ ] `[DOC]` Add pull-request-description.md
