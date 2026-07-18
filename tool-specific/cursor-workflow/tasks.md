@@ -114,7 +114,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 7 — Kanban & tasks UI
 
-- [ ] `[FE]` Add tasks API service methods (list, create, update, archive, restore)
+- [x] `[FE]` Add tasks API service methods (list, create, update, archive, restore)
 - [ ] `[FE]` Build Kanban page with four columns: TODO, IN_PROGRESS, IN_REVIEW, DONE
 - [ ] `[FE]` Add project selector / context for board scope
 - [ ] `[FE]` Render task cards (title, priority, assignee, due date)

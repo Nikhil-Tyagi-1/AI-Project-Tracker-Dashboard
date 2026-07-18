@@ -1,11 +1,17 @@
 import { apiClient } from "@/services/api/client";
 import { apiRoutes } from "@/services/api/routes";
-import type { ApiCollectionResponse } from "@/types/api";
-import type { Task, TaskListParams, TaskListResult } from "@/types/task";
+import type { ApiCollectionResponse, ApiSuccessResponse } from "@/types/api";
+import type {
+  CreateTaskInput,
+  Task,
+  TaskListParams,
+  TaskListResult,
+  UpdateTaskInput,
+} from "@/types/task";
 
 /**
- * Minimal Tasks REST client for project detail summaries.
- * Full CRUD + Redux land in Milestone 7.
+ * Tasks REST client.
+ * Paths come from `apiRoutes`; transport uses the shared Axios `apiClient`.
  */
 
 function toQueryParams(
@@ -26,10 +32,10 @@ function toQueryParams(
   if (params.priority) {
     query.priority = params.priority;
   }
-  if (params.assigneeId) {
+  if (params.assigneeId !== undefined && params.assigneeId !== "") {
     query.assigneeId = params.assigneeId;
   }
-  if (params.search) {
+  if (params.search !== undefined && params.search !== "") {
     query.search = params.search;
   }
   if (params.sortBy) {
@@ -51,7 +57,7 @@ function toQueryParams(
   return query;
 }
 
-/** GET /tasks — paginated list (optionally scoped by projectId). */
+/** GET /tasks — paginated list with optional project scope, search, and filters. */
 export async function getTasks(
   params?: TaskListParams,
 ): Promise<TaskListResult> {
@@ -65,3 +71,57 @@ export async function getTasks(
     meta: response.data.meta,
   };
 }
+
+/** GET /tasks/:id — includes archived tasks. */
+export async function getTaskById(id: string): Promise<Task> {
+  const response = await apiClient.get<ApiSuccessResponse<Task>>(
+    apiRoutes.tasks.byId(id),
+  );
+  return response.data.data;
+}
+
+/** POST /tasks */
+export async function createTask(input: CreateTaskInput): Promise<Task> {
+  const response = await apiClient.post<ApiSuccessResponse<Task>>(
+    apiRoutes.tasks.root,
+    input,
+  );
+  return response.data.data;
+}
+
+/** PATCH /tasks/:id */
+export async function updateTask(
+  id: string,
+  input: UpdateTaskInput,
+): Promise<Task> {
+  const response = await apiClient.patch<ApiSuccessResponse<Task>>(
+    apiRoutes.tasks.byId(id),
+    input,
+  );
+  return response.data.data;
+}
+
+/** PATCH /tasks/:id/archive */
+export async function archiveTask(id: string): Promise<Task> {
+  const response = await apiClient.patch<ApiSuccessResponse<Task>>(
+    apiRoutes.tasks.archive(id),
+  );
+  return response.data.data;
+}
+
+/** PATCH /tasks/:id/restore */
+export async function restoreTask(id: string): Promise<Task> {
+  const response = await apiClient.patch<ApiSuccessResponse<Task>>(
+    apiRoutes.tasks.restore(id),
+  );
+  return response.data.data;
+}
+
+export const tasksApi = {
+  getTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  archiveTask,
+  restoreTask,
+} as const;

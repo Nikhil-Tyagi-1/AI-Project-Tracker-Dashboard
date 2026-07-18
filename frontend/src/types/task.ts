@@ -1,9 +1,10 @@
 import type { Priority, TaskStatus } from "@/constants/enums";
 import type { PaginationMeta } from "@/types/api";
+import type { SortOrder } from "@/types/project";
 
 /**
- * Task domain types aligned with docs/api/tasks.md.
- * Full tasks feature slice lands in Milestone 7; detail summary only needs list + counts.
+ * Task domain types aligned with docs/api/tasks.md and the backend
+ * TaskWithRelations response shape.
  */
 
 export type TaskProjectSummary = {
@@ -35,29 +36,61 @@ export type Task = {
   updatedAt: string;
 };
 
+export type TaskSortBy =
+  | "title"
+  | "createdAt"
+  | "updatedAt"
+  | "priority"
+  | "dueDate"
+  | "sortOrder"
+  | "status";
+
+/** Query params for GET /tasks (mirrors backend taskListQuerySchema). */
 export type TaskListParams = {
   projectId?: string;
   status?: TaskStatus;
   priority?: Priority;
   assigneeId?: string;
   search?: string;
-  sortBy?:
-    | "title"
-    | "createdAt"
-    | "updatedAt"
-    | "priority"
-    | "dueDate"
-    | "sortOrder"
-    | "status";
-  sortOrder?: "asc" | "desc";
+  sortBy?: TaskSortBy;
+  sortOrder?: SortOrder;
   page?: number;
   pageSize?: number;
   includeArchived?: boolean;
 };
 
+export type TaskListMeta = PaginationMeta;
+
 export type TaskListResult = {
   data: Task[];
-  meta: PaginationMeta;
+  meta: TaskListMeta;
+};
+
+/** Body for POST /tasks. */
+export type CreateTaskInput = {
+  title: string;
+  projectId: string;
+  description?: string;
+  status?: TaskStatus;
+  priority?: Priority;
+  assigneeId?: string;
+  dueDate?: string;
+  sortOrder?: number;
+};
+
+/**
+ * Body for PATCH /tasks/:id.
+ * `null` clears nullable fields (description, assigneeId, dueDate).
+ * `projectId` cannot be changed after create.
+ */
+export type UpdateTaskInput = {
+  title?: string;
+  description?: string | null;
+  assigneeId?: string | null;
+  status?: TaskStatus;
+  priority?: Priority;
+  dueDate?: string | null;
+  sortOrder?: number;
 };
 
 export type TaskStatusSummary = {

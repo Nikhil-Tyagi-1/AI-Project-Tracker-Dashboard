@@ -24,10 +24,14 @@ export type {
   UpdateProjectInput,
 } from "@/types/project";
 export type {
+  CreateTaskInput,
   Task,
   TaskAssignee,
+  TaskListMeta,
   TaskListParams,
   TaskListResult,
   TaskProjectSummary,
+  TaskSortBy,
   TaskStatusSummary,
+  UpdateTaskInput,
 } from "@/types/task";
