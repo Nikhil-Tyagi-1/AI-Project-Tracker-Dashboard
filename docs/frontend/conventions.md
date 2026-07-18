@@ -163,10 +163,12 @@ Keep dialogs controlled by the parent (`open`, `onConfirm`, `onCancel`). Use `de
 
 - Store factory: `store/makeStore` via `store/index.ts`.
 - UI slice: navigation drawer open state + toast queue (`store/slices/uiSlice.ts`).
+- Projects slice: list/detail/mutations, filters, and async thunks (`store/slices/projectsSlice.ts`).
 - Typed hooks: `useAppDispatch`, `useAppSelector`, `useAppStore`.
 - HTTP: `apiClient` from `@/services/api` — base URL from `NEXT_PUBLIC_API_BASE_URL` (see `frontend/.env.example`).
+- Projects API: `getProjects`, `getProjectById`, `createProject`, `updateProject`, `archiveProject`, `restoreProject` from `@/services/api`.
 
-Feature slices and API modules are added in Milestones 6–8; register reducers in `makeStore` as they land.
+Feature slices and API modules continue in Milestones 7–8 (tasks, dashboard); register reducers in `makeStore` as they land.
 
 ---
 

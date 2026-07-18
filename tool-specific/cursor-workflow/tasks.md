@@ -96,8 +96,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 6 — Projects UI
 
-- [ ] `[FE]` Add projects API service methods (list, get, create, update, archive, restore)
-- [ ] `[FE]` Add Redux slice (or feature state) for projects list/detail loading and errors
+- [x] `[FE]` Add projects API service methods (list, get, create, update, archive, restore)
+- [x] `[FE]` Add Redux slice (or feature state) for projects list/detail loading and errors
 - [ ] `[FE]` Build Projects list page with table/cards layout
 - [ ] `[FE]` Add debounced search input (`q`) with clear control
 - [ ] `[FE]` Add filters for status, priority, owner + reset filters control

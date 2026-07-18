@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import { projectsReducer } from "@/store/slices/projectsSlice";
 import { uiReducer } from "@/store/slices/uiSlice";
 
 /**
@@ -7,13 +8,13 @@ import { uiReducer } from "@/store/slices/uiSlice";
  * Use `makeStore` per request/client tree to avoid sharing state across navigations.
  *
  * Register feature slices here as domains are implemented:
- * projects, tasks, dashboard (Milestones 6–8).
+ * projects (Milestone 6), tasks, dashboard (Milestones 7–8).
  */
 export const makeStore = () =>
   configureStore({
     reducer: {
       ui: uiReducer,
-      // projects: projectsReducer,
+      projects: projectsReducer,
       // tasks: tasksReducer,
       // dashboard: dashboardReducer,
     },

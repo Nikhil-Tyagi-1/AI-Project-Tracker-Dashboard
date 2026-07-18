@@ -4,7 +4,12 @@
  */
 export const apiRoutes = {
   health: "/health",
-  projects: "/projects",
+  projects: {
+    root: "/projects",
+    byId: (id: string) => `/projects/${id}`,
+    archive: (id: string) => `/projects/${id}/archive`,
+    restore: (id: string) => `/projects/${id}/restore`,
+  },
   tasks: "/tasks",
   dashboard: {
     summary: "/dashboard/summary",
