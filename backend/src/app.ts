@@ -3,6 +3,7 @@ import express from "express";
 import { env } from "./config/env";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
+import dashboardRouter from "./routes/dashboard";
 import healthRouter from "./routes/health";
 import projectRouter from "./routes/project";
 import taskRouter from "./routes/task";
@@ -29,6 +30,7 @@ export function createApp() {
   app.use("/api", healthRouter);
   app.use("/api/projects", projectRouter);
   app.use("/api/tasks", taskRouter);
+  app.use("/api/dashboard", dashboardRouter);
 
   // Must be registered after all routes.
   app.use(errorHandler);
