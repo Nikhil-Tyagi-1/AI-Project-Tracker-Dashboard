@@ -121,8 +121,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Implement drag-and-drop between columns with immediate UI update
 - [x] `[FE]` Persist status changes via API; roll back UI and toast on failure
 - [x] `[FE]` Add non-drag status alternative (select/menu) for accessibility
-- [ ] `[FE]` Add create-task dialog/form with RHF + Zod
-- [ ] `[FE]` Add Kanban filters (priority, assignee) and task title search
+- [x] `[FE]` Add create-task dialog/form with RHF + Zod
+- [x] `[FE]` Add Kanban filters (priority, assignee) and task title search
 - [x] `[FE]` Support horizontal column scroll on small screens
 - [x] `[TEST]` Test optimistic update rollback behavior (unit or integration)
 - [ ] `[DOC]` Document Kanban behavior and failure handling

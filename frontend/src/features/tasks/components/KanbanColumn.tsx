@@ -25,6 +25,9 @@ export type KanbanColumnProps = {
   status: TaskStatus;
   tasks: Task[];
   onStatusChange: (taskId: string, status: TaskStatus) => void;
+  onEditTask: (task: Task) => void;
+  onArchiveTask: (task: Task) => void;
+  onRestoreTask: (task: Task) => void;
   disabled?: boolean;
 };
 
@@ -35,6 +38,9 @@ export function KanbanColumn({
   status,
   tasks,
   onStatusChange,
+  onEditTask,
+  onArchiveTask,
+  onRestoreTask,
   disabled = false,
 }: KanbanColumnProps) {
   const label = taskStatusLabels[status];
@@ -145,6 +151,9 @@ export function KanbanColumn({
                 <TaskCard
                   task={task}
                   onStatusChange={onStatusChange}
+                  onEdit={onEditTask}
+                  onArchive={onArchiveTask}
+                  onRestore={onRestoreTask}
                   disabled={disabled}
                 />
               </Box>

@@ -203,8 +203,10 @@ const tasksSlice = createSlice({
       if (state.filters.projectId === action.payload) {
         return;
       }
-      state.filters.projectId = action.payload;
-      state.filters.page = 1;
+      state.filters = {
+        ...DEFAULT_TASKS_FILTERS,
+        projectId: action.payload,
+      };
       // Drop previous board data so columns never flash another project's tasks.
       state.items = [];
       state.meta = null;

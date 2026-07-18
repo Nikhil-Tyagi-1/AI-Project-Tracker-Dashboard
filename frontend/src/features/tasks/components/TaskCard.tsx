@@ -1,12 +1,17 @@
 "use client";
 
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import UnarchiveOutlinedIcon from "@mui/icons-material/UnarchiveOutlined";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -36,15 +41,21 @@ const statusAccent: Record<TaskStatus, string> = {
 export type TaskCardProps = {
   task: Task;
   onStatusChange: (taskId: string, status: TaskStatus) => void;
+  onEdit: (task: Task) => void;
+  onArchive: (task: Task) => void;
+  onRestore: (task: Task) => void;
   disabled?: boolean;
 };
 
 /**
- * Draggable Kanban task card with an accessible status menu alternative.
+ * Draggable Kanban task card with accessible edit / archive / status actions.
  */
 export function TaskCard({
   task,
   onStatusChange,
+  onEdit,
+  onArchive,
+  onRestore,
   disabled = false,
 }: TaskCardProps) {
   const menuId = useId();
@@ -62,7 +73,7 @@ export function TaskCard({
   } = useSortable({
     id: task.id,
     data: { type: "task", task },
-    disabled,
+    disabled: disabled || task.isArchived,
   });
 
   const assigneeLabel = task.assignee?.name ?? "Unassigned";
@@ -99,7 +110,7 @@ export function TaskCard({
         borderRadius: 1,
         bgcolor: "background.paper",
         p: 1.5,
-        opacity: isDragging ? 0.55 : 1,
+        opacity: isDragging ? 0.55 : task.isArchived ? 0.72 : 1,
         boxShadow: isDragging ? 4 : 0,
         transition: "border-color 0.2s ease, box-shadow 0.2s ease",
         "&:hover": {
@@ -125,34 +136,42 @@ export function TaskCard({
               {...attributes}
               size="small"
               aria-label={`Drag ${task.title}`}
-              disabled={disabled}
+              disabled={disabled || task.isArchived}
               sx={{
                 mt: -0.5,
                 ml: -0.75,
-                cursor: disabled ? "default" : "grab",
+                cursor:
+                  disabled || task.isArchived ? "default" : "grab",
                 touchAction: "none",
-                "&:active": { cursor: disabled ? "default" : "grabbing" },
+                "&:active": {
+                  cursor:
+                    disabled || task.isArchived ? "default" : "grabbing",
+                },
               }}
             >
               <DragIndicatorIcon fontSize="small" />
             </IconButton>
 
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontWeight: 700,
-                lineHeight: 1.35,
-                wordBreak: "break-word",
-                pt: 0.25,
-              }}
-            >
-              {task.title}
-            </Typography>
+            <Stack spacing={0.5} sx={{ minWidth: 0, pt: 0.25 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  wordBreak: "break-word",
+                }}
+              >
+                {task.title}
+              </Typography>
+              {task.isArchived ? (
+                <Chip label="Archived" size="small" sx={{ alignSelf: "flex-start" }} />
+              ) : null}
+            </Stack>
           </Stack>
 
           <IconButton
             size="small"
-            aria-label={`Change status for ${task.title}`}
+            aria-label={`Actions for ${task.title}`}
             aria-controls={menuOpen ? menuId : undefined}
             aria-haspopup="true"
             aria-expanded={menuOpen ? "true" : undefined}
@@ -215,31 +234,76 @@ export function TaskCard({
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         slotProps={{
           list: {
-            "aria-label": `Move ${task.title} to status`,
+            "aria-label": `Actions for ${task.title}`,
             dense: true,
           },
         }}
       >
-        {TASK_STATUS_VALUES.map((status) => (
+        {!task.isArchived ? (
           <MenuItem
-            key={status}
-            selected={status === task.status}
-            onClick={() => handleSelectStatus(status)}
+            onClick={() => {
+              handleCloseMenu();
+              onEdit(task);
+            }}
           >
-            <ListItemIcon sx={{ minWidth: 28 }}>
-              <Box
-                aria-hidden
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  bgcolor: statusAccent[status],
-                }}
-              />
+            <ListItemIcon>
+              <EditOutlinedIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>{taskStatusLabels[status]}</ListItemText>
+            <ListItemText>Edit task</ListItemText>
           </MenuItem>
-        ))}
+        ) : null}
+
+        {task.isArchived ? (
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              onRestore(task);
+            }}
+          >
+            <ListItemIcon>
+              <UnarchiveOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Restore task</ListItemText>
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              onArchive(task);
+            }}
+          >
+            <ListItemIcon>
+              <ArchiveOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Archive task</ListItemText>
+          </MenuItem>
+        )}
+
+        {!task.isArchived ? (
+          <>
+            <Divider />
+            {TASK_STATUS_VALUES.map((status) => (
+              <MenuItem
+                key={status}
+                selected={status === task.status}
+                onClick={() => handleSelectStatus(status)}
+              >
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <Box
+                    aria-hidden
+                    sx={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                      bgcolor: statusAccent[status],
+                    }}
+                  />
+                </ListItemIcon>
+                <ListItemText>{taskStatusLabels[status]}</ListItemText>
+              </MenuItem>
+            ))}
+          </>
+        ) : null}
       </Menu>
     </Box>
   );

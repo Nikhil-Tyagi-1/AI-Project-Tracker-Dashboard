@@ -36,6 +36,9 @@ export type KanbanBoardProps = {
     taskId: string,
     status: TaskStatus,
   ) => void | Promise<boolean>;
+  onEditTask: (task: Task) => void;
+  onArchiveTask: (task: Task) => void;
+  onRestoreTask: (task: Task) => void;
   disabled?: boolean;
 };
 
@@ -47,6 +50,9 @@ export function KanbanBoard({
   tasks,
   onMoveTask,
   onStatusChange,
+  onEditTask,
+  onArchiveTask,
+  onRestoreTask,
   disabled = false,
 }: KanbanBoardProps) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -160,6 +166,9 @@ export function KanbanBoard({
               onStatusChange={(taskId, nextStatus) => {
                 void onStatusChange(taskId, nextStatus);
               }}
+              onEditTask={onEditTask}
+              onArchiveTask={onArchiveTask}
+              onRestoreTask={onRestoreTask}
               disabled={disabled}
             />
           </Box>
