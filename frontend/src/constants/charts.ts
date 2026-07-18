@@ -12,6 +12,8 @@ export const chartPalette = {
   error: colorTokens.error.main,
   info: colorTokens.info.main,
   muted: "#94A3B8",
+  /** Recharts Tooltip cursor / active band (replaces default grey). */
+  hover: "rgba(59, 124, 173, 0.18)",
   series: [
     colorTokens.primary.main,
     colorTokens.secondary.main,

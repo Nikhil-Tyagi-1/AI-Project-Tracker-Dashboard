@@ -64,6 +64,7 @@ export function ProjectProgressChart({
             tick={{ fontSize: 12 }}
           />
           <Tooltip
+            cursor={{ fill: chartPalette.hover }}
             formatter={(value) => [`${String(value)}%`, "Progress"]}
             labelFormatter={(label) => String(label)}
           />

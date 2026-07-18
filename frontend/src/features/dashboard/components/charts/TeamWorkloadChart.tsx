@@ -59,6 +59,7 @@ export function TeamWorkloadChart({
           />
           <YAxis allowDecimals={false} tick={{ fontSize: 12 }} width={36} />
           <Tooltip
+            cursor={{ fill: chartPalette.hover }}
             formatter={(value) => [String(value), "Tasks"]}
             labelFormatter={(label) => String(label)}
           />

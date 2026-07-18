@@ -120,6 +120,12 @@ export function ChartPanel({
               maxWidth: "100%",
               minWidth: 0,
               overflow: "hidden",
+              // Recharts surfaces and internal layers take focus on click; hide
+              // the default outline — charts are not keyboard focus targets.
+              "& .recharts-wrapper svg:focus, & .recharts-wrapper svg:focus-visible, & .recharts-wrapper svg *:focus, & .recharts-wrapper svg *:focus-visible":
+                {
+                  outline: "none",
+                },
             }}
           >
             {children}

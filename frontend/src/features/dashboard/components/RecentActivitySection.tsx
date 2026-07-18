@@ -10,6 +10,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { alpha, type SxProps, type Theme } from "@mui/material/styles";
 import Link from "next/link";
 
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui";
@@ -22,6 +23,14 @@ export type RecentActivitySectionProps = {
   status: RequestStatus;
   error: string | null;
   onRetry: () => void;
+};
+
+const activityItemSx: SxProps<Theme> = {
+  borderRadius: 1,
+  alignItems: "flex-start",
+  "&:hover": {
+    bgcolor: (theme) => alpha(theme.palette.primary.light, 0.18),
+  },
 };
 
 function activityActionLabel(item: ActivityItem): string {
@@ -174,7 +183,7 @@ export function RecentActivitySection({
                     key={item.id}
                     component={Link}
                     href={item.href}
-                    sx={{ borderRadius: 1, alignItems: "flex-start" }}
+                    sx={activityItemSx}
                   >
                     {content}
                   </ListItemButton>
@@ -185,7 +194,7 @@ export function RecentActivitySection({
                 <ListItemButton
                   key={item.id}
                   disabled
-                  sx={{ borderRadius: 1, alignItems: "flex-start" }}
+                  sx={activityItemSx}
                 >
                   {content}
                 </ListItemButton>
