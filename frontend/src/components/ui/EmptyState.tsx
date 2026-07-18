@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
-import type { ComponentType, ReactNode } from "react";
+import { isValidElement, type ComponentType, type ReactNode } from "react";
 
 export type EmptyStateProps = {
   /** Primary heading for the empty view. */
@@ -25,6 +25,26 @@ export type EmptyStateProps = {
   maxWidth?: number | string;
 };
 
+function resolveIcon(
+  IconOrNode: ComponentType<SvgIconProps> | ReactNode,
+  sx: SvgIconProps["sx"],
+): ReactNode {
+  if (IconOrNode == null || typeof IconOrNode === "boolean") {
+    return null;
+  }
+  // MUI icons are often React.memo objects (not functions), so treat anything
+  // that isn't already a renderable node as a component type.
+  if (
+    isValidElement(IconOrNode) ||
+    typeof IconOrNode === "string" ||
+    typeof IconOrNode === "number"
+  ) {
+    return IconOrNode;
+  }
+  const Icon = IconOrNode as ComponentType<SvgIconProps>;
+  return <Icon aria-hidden sx={sx} />;
+}
+
 /**
  * Shared empty-state panel for lists, boards, and dashboard sections.
  */
@@ -37,15 +57,11 @@ export function EmptyState({
   secondaryAction,
   maxWidth = 420,
 }: EmptyStateProps) {
-  const iconNode =
-    typeof IconOrNode === "function" ? (
-      <IconOrNode
-        aria-hidden
-        sx={{ fontSize: 48, color: "text.secondary", opacity: 0.85 }}
-      />
-    ) : (
-      IconOrNode
-    );
+  const iconNode = resolveIcon(IconOrNode, {
+    fontSize: 48,
+    color: "text.secondary",
+    opacity: 0.85,
+  });
 
   return (
     <Box

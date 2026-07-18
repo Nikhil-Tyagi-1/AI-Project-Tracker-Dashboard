@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
-import type { ComponentType, ReactNode } from "react";
+import { isValidElement, type ComponentType, type ReactNode } from "react";
 
 export type ErrorStateProps = {
   /** Primary heading for the error view. */
@@ -25,6 +25,26 @@ export type ErrorStateProps = {
   maxWidth?: number | string;
 };
 
+function resolveIcon(
+  IconOrNode: ComponentType<SvgIconProps> | ReactNode,
+  sx: SvgIconProps["sx"],
+): ReactNode {
+  if (IconOrNode == null || typeof IconOrNode === "boolean") {
+    return null;
+  }
+  // MUI icons are often React.memo objects (not functions), so treat anything
+  // that isn't already a renderable node as a component type.
+  if (
+    isValidElement(IconOrNode) ||
+    typeof IconOrNode === "string" ||
+    typeof IconOrNode === "number"
+  ) {
+    return IconOrNode;
+  }
+  const Icon = IconOrNode as ComponentType<SvgIconProps>;
+  return <Icon aria-hidden sx={sx} />;
+}
+
 /**
  * Shared error-state panel for failed loads and recoverable section errors.
  */
@@ -37,15 +57,11 @@ export function ErrorState({
   secondaryAction,
   maxWidth = 420,
 }: ErrorStateProps) {
-  const iconNode =
-    typeof IconOrNode === "function" ? (
-      <IconOrNode
-        aria-hidden
-        sx={{ fontSize: 48, color: "error.main", opacity: 0.9 }}
-      />
-    ) : (
-      IconOrNode
-    );
+  const iconNode = resolveIcon(IconOrNode, {
+    fontSize: 48,
+    color: "error.main",
+    opacity: 0.9,
+  });
 
   return (
     <Box
