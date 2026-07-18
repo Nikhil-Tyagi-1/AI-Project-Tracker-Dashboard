@@ -4,10 +4,10 @@ import { env } from "./config/env";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 import healthRouter from "./routes/health";
+import projectRouter from "./routes/project";
 
 /**
  * Express application factory.
- * Middleware only — route modules are mounted when APIs are implemented.
  */
 export function createApp() {
   const app = express();
@@ -26,6 +26,7 @@ export function createApp() {
   app.use(express.urlencoded({ extended: true }));
 
   app.use("/api", healthRouter);
+  app.use("/api/projects", projectRouter);
 
   // Must be registered after all routes.
   app.use(errorHandler);
