@@ -98,10 +98,10 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 - [x] `[FE]` Add projects API service methods (list, get, create, update, archive, restore)
 - [x] `[FE]` Add Redux slice (or feature state) for projects list/detail loading and errors
-- [ ] `[FE]` Build Projects list page with table/cards layout
-- [ ] `[FE]` Add debounced search input (`q`) with clear control
-- [ ] `[FE]` Add filters for status, priority, owner + reset filters control
-- [ ] `[FE]` Add sort controls (`sortBy`, `sortOrder`)
+- [x] `[FE]` Build Projects list page with table/cards layout
+- [x] `[FE]` Add debounced search input (`q`) with clear control
+- [x] `[FE]` Add filters for status, priority, owner + reset filters control
+- [x] `[FE]` Add sort controls (`sortBy`, `sortOrder`)
 - [ ] `[FE]` Build Create Project form page with React Hook Form + Zod
 - [ ] `[FE]` Build Edit Project form page reusing the same form component
 - [ ] `[FE]` Build Project Details page (metadata, risk notes, task summary, link to board)
