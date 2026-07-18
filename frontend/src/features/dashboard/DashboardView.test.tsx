@@ -6,12 +6,16 @@ import { Provider } from "react-redux";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DashboardView } from "@/features/dashboard/DashboardView";
+import {
+  emptyDashboardSummary,
+  seededDashboardInsights,
+  seededDashboardSummary,
+} from "@/features/dashboard/testFixtures";
 import * as dashboardApi from "@/services/api/dashboard";
 import * as projectsApi from "@/services/api/projects";
 import * as tasksApi from "@/services/api/tasks";
 import { dashboardReducer } from "@/store/slices/dashboardSlice";
 import { uiReducer } from "@/store/slices/uiSlice";
-import type { DashboardSummary } from "@/types/dashboard";
 
 vi.mock("@/services/api/dashboard", () => ({
   getDashboardSummary: vi.fn(),
@@ -53,67 +57,6 @@ beforeAll(() => {
   vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 });
 
-const seededSummary: DashboardSummary = {
-  metrics: {
-    totalProjects: 5,
-    activeProjects: 1,
-    completedProjects: 1,
-    atRiskProjects: 1,
-    totalTasks: 27,
-    completedTasks: 10,
-    pendingTasks: 17,
-    completionPercentage: 37,
-  },
-  charts: {
-    projectProgress: [
-      { label: "API Gateway Migration", value: 100 },
-      { label: "Customer Portal Redesign", value: 45 },
-    ],
-    taskStatusDistribution: [
-      { label: "To Do", value: 10 },
-      { label: "In Progress", value: 4 },
-      { label: "In Review", value: 3 },
-      { label: "Done", value: 10 },
-    ],
-    teamWorkload: [
-      { label: "Jordan Lee", value: 7 },
-      { label: "Unassigned", value: 2 },
-    ],
-    monthlyActivity: [
-      { label: "2026-02", created: 3, updated: 0 },
-      { label: "2026-03", created: 4, updated: 0 },
-      { label: "2026-04", created: 5, updated: 0 },
-      { label: "2026-05", created: 7, updated: 0 },
-      { label: "2026-06", created: 13, updated: 0 },
-      { label: "2026-07", created: 0, updated: 8 },
-    ],
-  },
-};
-
-const emptySummary: DashboardSummary = {
-  metrics: {
-    totalProjects: 0,
-    activeProjects: 0,
-    completedProjects: 0,
-    atRiskProjects: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    pendingTasks: 0,
-    completionPercentage: 0,
-  },
-  charts: {
-    projectProgress: [],
-    taskStatusDistribution: [
-      { label: "To Do", value: 0 },
-      { label: "In Progress", value: 0 },
-      { label: "In Review", value: 0 },
-      { label: "Done", value: 0 },
-    ],
-    teamWorkload: [],
-    monthlyActivity: [],
-  },
-};
-
 function createTestStore() {
   return configureStore({
     reducer: {
@@ -150,16 +93,45 @@ describe("DashboardView", () => {
     });
   });
 
-  it("renders metric cards from /dashboard/summary", async () => {
+  it("renders the Dashboard page successfully with mocked summary data", async () => {
     vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
-      seededSummary,
+      seededDashboardSummary,
+    );
+    vi.mocked(dashboardApi.getDashboardInsights).mockResolvedValue(
+      seededDashboardInsights,
     );
 
     renderDashboard();
 
     expect(
+      screen.getByRole("heading", { level: 1, name: "Dashboard" }),
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole("status", { name: "Loading dashboard metrics" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("status", { name: "Loading dashboard charts" }),
+    ).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("article", { name: "Total Projects: 5" }),
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole("region", { name: "Portfolio charts" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Smart Insights")).toBeInTheDocument();
+    expect(screen.getByText("Recent Activity")).toBeInTheDocument();
+  });
+
+  it("displays metric cards from mocked /dashboard/summary values", async () => {
+    vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
+      seededDashboardSummary,
+    );
+
+    renderDashboard();
 
     await waitFor(() => {
       expect(
@@ -188,17 +160,36 @@ describe("DashboardView", () => {
     expect(
       screen.getByRole("article", { name: "Completion Percentage: 37%" }),
     ).toBeInTheDocument();
+  });
 
-    expect(screen.getByText("Project Progress")).toBeInTheDocument();
-    expect(screen.getByText("Task Status")).toBeInTheDocument();
-    expect(screen.getByText("Team Workload")).toBeInTheDocument();
-    expect(screen.getByText("Monthly Activity")).toBeInTheDocument();
+  it("renders chart widgets from mocked summary datasets", async () => {
+    vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
+      seededDashboardSummary,
+    );
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("region", { name: "Project Progress" }),
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole("region", { name: "Task Status" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Team Workload" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Monthly Activity" }),
+    ).toBeInTheDocument();
   });
 
   it("shows an error state with retry when the summary request fails", async () => {
     vi.mocked(dashboardApi.getDashboardSummary)
       .mockRejectedValueOnce(new Error("Network down"))
-      .mockResolvedValueOnce(seededSummary);
+      .mockResolvedValueOnce(seededDashboardSummary);
 
     const user = userEvent.setup();
     renderDashboard();
@@ -219,9 +210,9 @@ describe("DashboardView", () => {
     });
   });
 
-  it("shows an empty state when the portfolio has no projects", async () => {
+  it("shows empty states when the portfolio has no projects", async () => {
     vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
-      emptySummary,
+      emptyDashboardSummary,
     );
 
     renderDashboard();
@@ -233,6 +224,10 @@ describe("DashboardView", () => {
     expect(
       screen.getByRole("article", { name: "Total Projects: 0" }),
     ).toBeInTheDocument();
+    expect(screen.getByText("No project progress")).toBeInTheDocument();
+    expect(screen.getByText("No task status data")).toBeInTheDocument();
+    expect(screen.getByText("No workload data")).toBeInTheDocument();
+    expect(screen.getByText("No monthly activity")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Create project" }),
     ).toBeInTheDocument();

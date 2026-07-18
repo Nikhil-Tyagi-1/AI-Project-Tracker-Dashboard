@@ -1,7 +1,8 @@
 # Dashboard API
 
 > **Base path:** `/api/dashboard`  
-> **All responses** use the standard envelope — `{ data }` for success payloads, `{ error }` for errors.
+> **All responses** use the standard envelope — `{ data }` for success payloads, `{ error }` for errors.  
+> **Frontend feature guide:** [`docs/features/dashboard.md`](../features/dashboard.md) (architecture, chart contracts, Insights mock UI, widget reuse).
 
 These endpoints compute portfolio analytics server-side from `Project` and `Task` tables. Chart payloads are chart-ready (`label` + `value` series) so the frontend can render widgets without additional transformation.
 

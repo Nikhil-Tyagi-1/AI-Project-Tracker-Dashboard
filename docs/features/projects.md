@@ -2,7 +2,7 @@
 
 > **App routes:** `/projects`, `/projects/new`, `/projects/:id`, `/projects/:id/edit`  
 > **API:** [`docs/api/projects.md`](../api/projects.md)  
-> **Related:** [`frontend conventions`](../frontend/conventions.md), [`Kanban & Tasks`](./kanban.md)
+> **Related:** [`frontend conventions`](../frontend/conventions.md), [`Kanban & Tasks`](./kanban.md), [`Dashboard & Analytics`](./dashboard.md)
 
 The Projects feature is the portfolio CRUD surface for AI Project Tracker Pro. Users can search and filter the list, open details, create or edit projects through a shared form, and archive or restore records.
 

@@ -164,11 +164,14 @@ Keep dialogs controlled by the parent (`open`, `onConfirm`, `onCancel`). Use `de
 - Store factory: `store/makeStore` via `store/index.ts`.
 - UI slice: navigation drawer open state + toast queue (`store/slices/uiSlice.ts`).
 - Projects slice: list/detail/mutations, filters, and async thunks (`store/slices/projectsSlice.ts`).
+- Tasks slice: list/detail/mutations, Kanban filters, and async thunks (`store/slices/tasksSlice.ts`).
+- Dashboard slice: summary, insights, and derived activity (`store/slices/dashboardSlice.ts`).
 - Typed hooks: `useAppDispatch`, `useAppSelector`, `useAppStore`.
 - HTTP: `apiClient` from `@/services/api` — base URL from `NEXT_PUBLIC_API_BASE_URL` (see `frontend/.env.example`).
 - Projects API: `getProjects`, `getProjectById`, `createProject`, `updateProject`, `archiveProject`, `restoreProject` from `@/services/api`.
+- Dashboard API: `getDashboardSummary`, `getDashboardInsights` from `@/services/api`.
 
-Feature slices and API modules continue in Milestones 7–8 (tasks, dashboard); register reducers in `makeStore` as they land.
+See [`docs/features/dashboard.md`](../features/dashboard.md) for Dashboard/Analytics architecture and chart contracts.
 
 ---
 
@@ -184,5 +187,5 @@ Never commit secrets. Only `NEXT_PUBLIC_*` values are available in the browser.
 
 ## Feature documentation & tests
 
-- Feature usage docs live under `docs/features/` (e.g. [Projects](../features/projects.md)).
+- Feature usage docs live under `docs/features/` (e.g. [Projects](../features/projects.md), [Kanban](../features/kanban.md), [Dashboard & Analytics](../features/dashboard.md)).
 - Frontend unit/component tests use Vitest + Testing Library: `npm run test --workspace=frontend`.

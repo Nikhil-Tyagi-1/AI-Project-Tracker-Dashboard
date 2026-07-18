@@ -2,7 +2,7 @@
 
 > **App route:** `/kanban` (optional `?projectId=`)  
 > **API:** [`docs/api/tasks.md`](../api/tasks.md)  
-> **Related:** [`docs/features/projects.md`](./projects.md), [`frontend conventions`](../frontend/conventions.md)
+> **Related:** [`docs/features/projects.md`](./projects.md), [`Dashboard & Analytics`](./dashboard.md), [`frontend conventions`](../frontend/conventions.md)
 
 The Kanban feature is the task board for AI Project Tracker Pro. Users select a project, view tasks in four status columns, create and edit tasks, search/filter the board, and move cards by drag-and-drop or an accessible status menu. Status changes use optimistic UI with API persistence and failure rollback.
 

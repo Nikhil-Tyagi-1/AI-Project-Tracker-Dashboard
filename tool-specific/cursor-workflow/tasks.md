@@ -143,7 +143,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Add skeletons, empty, and error states for all dashboard/analytics sections
 - [x] `[FE]` Ensure charts reflow responsively without horizontal page overflow
 - [x] `[TEST]` Smoke-test Dashboard and Analytics pages render with mocked API data
-- [ ] `[DOC]` Document chart data contracts and Insights mock behavior
+- [x] `[DOC]` Document chart data contracts and Insights mock behavior
 
 ---
 
