@@ -20,3 +20,12 @@ Guides for AI Project Tracker Pro UI modules. Each doc follows the same outline:
 | Specification | [`tool-specific/cursor-workflow/spec.md`](../../tool-specific/cursor-workflow/spec.md) |
 | Acceptance criteria | [`tool-specific/cursor-workflow/acceptance-criteria.md`](../../tool-specific/cursor-workflow/acceptance-criteria.md) |
 | Tasks | [`tool-specific/cursor-workflow/tasks.md`](../../tool-specific/cursor-workflow/tasks.md) |
+
+## Handoff
+
+| Document | Path |
+|----------|------|
+| Known limitations | [`../known-limitations.md`](../known-limitations.md) |
+| Future enhancements | [`../future-enhancements.md`](../future-enhancements.md) |
+| Reflection | [`../../reflection.md`](../../reflection.md) |
+| PR description | [`../../pull-request-description.md`](../../pull-request-description.md) |

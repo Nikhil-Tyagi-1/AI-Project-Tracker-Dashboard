@@ -167,11 +167,11 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[DOC]` Add feature docs for Projects, Kanban, Dashboard/Analytics, Settings — see `docs/features/` (Settings is placeholder-only)
 - [x] `[DOC]` Cross-link `project-context.md`, `spec.md`, `acceptance-criteria.md`, and this task list — each feature doc has a Cross-references section
 - [x] `[DOC]` Note Stretch Auth as explicitly out of MVP unless completed — noted in feature docs and `docs/database.md`
-- [ ] `[DOC]` Record known limitations and future enhancements summary
+- [x] `[DOC]` Record known limitations and future enhancements summary — `docs/known-limitations.md`, `docs/future-enhancements.md`
 - [x] `[DOC]` Create meaningful Git commits after each completed milestone
 - [ ] `[DOC]` Maintain prompt-history folder
-- [ ] `[DOC]` Add reflection.md
-- [ ] `[DOC]` Add pull-request-description.md
+- [x] `[DOC]` Add reflection.md
+- [x] `[DOC]` Add pull-request-description.md
 
 ---
 

@@ -389,6 +389,10 @@ Quick reference:
 | [docs/features/dashboard.md](docs/features/dashboard.md) | Dashboard metrics, charts, insights |
 | [docs/features/analytics.md](docs/features/analytics.md) | Analytics expanded charts |
 | [docs/features/settings.md](docs/features/settings.md) | Settings placeholder |
+| [docs/known-limitations.md](docs/known-limitations.md) | Current MVP constraints |
+| [docs/future-enhancements.md](docs/future-enhancements.md) | Post-MVP roadmap |
+| [reflection.md](reflection.md) | Architecture decisions & lessons |
+| [pull-request-description.md](pull-request-description.md) | Handoff PR template |
 | [tool-specific/cursor-workflow/project-context.md](tool-specific/cursor-workflow/project-context.md) | Business context & architecture |
 | [tool-specific/cursor-workflow/spec.md](tool-specific/cursor-workflow/spec.md) | Software specification |
 | [tool-specific/cursor-workflow/acceptance-criteria.md](tool-specific/cursor-workflow/acceptance-criteria.md) | Given/When/Then acceptance criteria |
