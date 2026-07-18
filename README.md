@@ -23,8 +23,20 @@ npm run dev:frontend
 
 See backend docs for migrate/seed. Frontend conventions (folder structure, theme, shared UI): [`docs/frontend/conventions.md`](docs/frontend/conventions.md).
 
+## Testing
+
+```bash
+npm test                 # backend (isolated SQLite) then frontend
+npm run test:backend     # Jest against ephemeral prisma/test.db (never dev.db)
+npm run test:frontend    # Vitest, non-watch
+npm run test:ci          # same as npm test — ready for any CI runner
+```
+
+Details: [`docs/testing.md`](docs/testing.md).
+
 ## Documentation
 
+- [Testing](docs/testing.md)
 - [Frontend conventions](docs/frontend/conventions.md)
 - [Projects feature](docs/features/projects.md)
 - [Database](docs/database.md)

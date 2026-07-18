@@ -158,6 +158,10 @@ cd backend
 npx prisma migrate deploy    # applies pending migrations; does NOT prompt; safe for CI
 ```
 
+### Automated tests (ephemeral DB)
+
+Backend tests never use `dev.db`. `npm run test:backend` (or `npm test` from the repo root) sets `DATABASE_URL=file:./test.db`, runs `prisma migrate deploy`, executes Jest, then deletes the ephemeral database. See [`docs/testing.md`](testing.md).
+
 ### Inspecting the database
 
 ```bash

@@ -34,8 +34,12 @@ yarn-error.log*
 # Testing / coverage
 coverage/
 
-# Backend database (future)
+# Backend SQLite databases (dev + ephemeral test)
 backend/prisma/*.db
 backend/prisma/*.db-journal
+backend/prisma/*.db-wal
+backend/prisma/*.db-shm
 *.sqlite
 *.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm

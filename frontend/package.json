@@ -9,8 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run --reporter=default",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --reporter=default --passWithNoTests=false"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
