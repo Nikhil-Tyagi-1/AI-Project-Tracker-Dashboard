@@ -133,16 +133,16 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 - [x] `[FE]` Build Dashboard page layout with metric cards
 - [x] `[FE]` Fetch and render `/dashboard/summary` into cards
-- [ ] `[FE]` Add Project Progress chart
-- [ ] `[FE]` Add Task Status pie/donut chart
-- [ ] `[FE]` Add Team Workload bar chart
-- [ ] `[FE]` Add Monthly Activity line chart
+- [x] `[FE]` Add Project Progress chart
+- [x] `[FE]` Add Task Status pie/donut chart
+- [x] `[FE]` Add Team Workload bar chart
+- [x] `[FE]` Add Monthly Activity line chart
 - [ ] `[FE]` Add recent activity list (API or derived/mock feed)
 - [ ] `[FE]` Add Smart Insights panel from `/dashboard/insights`
-- [ ] `[FE]` Build Analytics page (deeper chart/layout view; may reuse dashboard widgets)
-- [ ] `[FE]` Add skeletons, empty, and error states for all dashboard/analytics sections
-- [ ] `[FE]` Ensure charts reflow responsively without horizontal page overflow
-- [ ] `[TEST]` Smoke-test Dashboard and Analytics pages render with mocked API data
+- [x] `[FE]` Build Analytics page (deeper chart/layout view; may reuse dashboard widgets)
+- [x] `[FE]` Add skeletons, empty, and error states for all dashboard/analytics sections
+- [x] `[FE]` Ensure charts reflow responsively without horizontal page overflow
+- [x] `[TEST]` Smoke-test Dashboard and Analytics pages render with mocked API data
 - [ ] `[DOC]` Document chart data contracts and Insights mock behavior
 
 ---

@@ -13,8 +13,6 @@ import { appRoutes } from "@/constants/routes";
 import { motionPresets } from "@/constants/motion";
 import { ChartsGrid } from "@/features/dashboard/components/charts/ChartsGrid";
 import { DashboardChartsSkeleton } from "@/features/dashboard/components/charts/DashboardChartsSkeleton";
-import { DashboardMetricsSkeleton } from "@/features/dashboard/components/DashboardMetricsSkeleton";
-import { MetricsGrid } from "@/features/dashboard/components/MetricsGrid";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   fetchDashboardSummary,
@@ -25,10 +23,10 @@ import {
 } from "@/store/slices/dashboardSlice";
 
 /**
- * Dashboard feature view — metric cards + portfolio charts from summary API.
- * Smart Insights are intentionally deferred.
+ * Analytics feature view — dedicated layout for the four portfolio charts.
+ * Reuses the same chart components and `/dashboard/summary` data as Dashboard.
  */
-export function DashboardView() {
+export function AnalyticsView() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const metrics = useAppSelector(selectDashboardMetrics);
@@ -46,59 +44,56 @@ export function DashboardView() {
 
   const showSkeleton =
     summaryStatus === "loading" ||
-    (summaryStatus === "idle" && metrics === null);
-  const showError = summaryStatus === "failed" && metrics === null;
-  const showContent = summaryStatus === "succeeded" && metrics !== null;
+    (summaryStatus === "idle" && charts === null);
+  const showError = summaryStatus === "failed" && charts === null;
+  const showCharts = summaryStatus === "succeeded" && charts !== null;
   const showEmpty =
-    showContent && metrics !== null && metrics.totalProjects === 0;
+    showCharts && metrics !== null && metrics.totalProjects === 0;
 
   return (
     <Box
       component="section"
-      aria-labelledby="dashboard-page-title"
+      aria-labelledby="analytics-page-title"
       sx={{ width: "100%", maxWidth: "100%", minWidth: 0, overflowX: "hidden" }}
     >
       <Stack spacing={3} sx={{ minWidth: 0 }}>
         <Stack spacing={0.75} sx={{ minWidth: 0 }}>
           <Typography
-            id="dashboard-page-title"
+            id="analytics-page-title"
             component="h1"
             variant="h4"
             sx={{ fontWeight: 700, letterSpacing: "-0.02em" }}
           >
-            Dashboard
+            Analytics
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Portfolio health at a glance — projects, tasks, and completion.
+            Deeper views of project progress, task status, workload, and
+            monthly activity.
           </Typography>
         </Stack>
 
         {showSkeleton ? (
-          <Stack spacing={3}>
-            <DashboardMetricsSkeleton />
-            <DashboardChartsSkeleton variant="compact" />
-          </Stack>
+          <DashboardChartsSkeleton variant="expanded" />
         ) : null}
 
         {showError ? (
           <ErrorState
-            title="Could not load dashboard"
+            title="Could not load analytics"
             message={
               summaryError ??
-              "Something went wrong while loading portfolio metrics."
+              "Something went wrong while loading portfolio charts."
             }
             onRetry={handleRetry}
           />
         ) : null}
 
-        {showContent && metrics ? (
+        {showCharts && charts ? (
           <motion.div {...motionPresets.fadeUp}>
-            <Stack spacing={3} sx={{ minWidth: 0 }}>
-              <MetricsGrid metrics={metrics} />
-              {charts ? (
-                <ChartsGrid charts={charts} variant="compact" />
-              ) : null}
-            </Stack>
+            <ChartsGrid
+              charts={charts}
+              variant="expanded"
+              chartHeight={320}
+            />
           </motion.div>
         ) : null}
 
@@ -106,8 +101,8 @@ export function DashboardView() {
           <motion.div {...motionPresets.fadeUp}>
             <EmptyState
               icon={FolderOffOutlinedIcon}
-              title="No projects yet"
-              description="Create your first project to populate dashboard metrics and charts."
+              title="No analytics yet"
+              description="Create projects and tasks to populate progress, status, workload, and activity charts."
               actionLabel="Create project"
               onAction={() => {
                 router.push(appRoutes.projectCreate);

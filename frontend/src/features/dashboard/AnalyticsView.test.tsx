@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { Provider } from "react-redux";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DashboardView } from "@/features/dashboard/DashboardView";
+import { AnalyticsView } from "@/features/dashboard/AnalyticsView";
 import * as dashboardApi from "@/services/api/dashboard";
 import { dashboardReducer } from "@/store/slices/dashboardSlice";
 import { uiReducer } from "@/store/slices/uiSlice";
@@ -80,30 +80,6 @@ const seededSummary: DashboardSummary = {
   },
 };
 
-const emptySummary: DashboardSummary = {
-  metrics: {
-    totalProjects: 0,
-    activeProjects: 0,
-    completedProjects: 0,
-    atRiskProjects: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    pendingTasks: 0,
-    completionPercentage: 0,
-  },
-  charts: {
-    projectProgress: [],
-    taskStatusDistribution: [
-      { label: "To Do", value: 0 },
-      { label: "In Progress", value: 0 },
-      { label: "In Review", value: 0 },
-      { label: "Done", value: 0 },
-    ],
-    teamWorkload: [],
-    monthlyActivity: [],
-  },
-};
-
 function createTestStore() {
   return configureStore({
     reducer: {
@@ -113,61 +89,35 @@ function createTestStore() {
   });
 }
 
-function renderDashboard() {
+function renderAnalytics() {
   const store = createTestStore();
-  const view = render(
+  return render(
     <Provider store={store}>
-      <DashboardView />
+      <AnalyticsView />
     </Provider>,
   );
-  return { store, ...view };
 }
 
-describe("DashboardView", () => {
+describe("AnalyticsView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders metric cards from /dashboard/summary", async () => {
+  it("renders the four chart widgets from /dashboard/summary", async () => {
     vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
       seededSummary,
     );
 
-    renderDashboard();
+    renderAnalytics();
 
     expect(
-      screen.getByRole("status", { name: "Loading dashboard metrics" }),
+      screen.getByRole("status", { name: "Loading dashboard charts" }),
     ).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("article", { name: "Total Projects: 5" }),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Project Progress")).toBeInTheDocument();
     });
 
-    expect(
-      screen.getByRole("article", { name: "Active Projects: 1" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "Completed Projects: 1" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "At Risk Projects: 1" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "Total Tasks: 27" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "Completed Tasks: 10" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "Pending Tasks: 17" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("article", { name: "Completion Percentage: 37%" }),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText("Project Progress")).toBeInTheDocument();
     expect(screen.getByText("Task Status")).toBeInTheDocument();
     expect(screen.getByText("Team Workload")).toBeInTheDocument();
     expect(screen.getByText("Monthly Activity")).toBeInTheDocument();
@@ -175,44 +125,22 @@ describe("DashboardView", () => {
 
   it("shows an error state with retry when the summary request fails", async () => {
     vi.mocked(dashboardApi.getDashboardSummary)
-      .mockRejectedValueOnce(new Error("Network down"))
+      .mockRejectedValueOnce(new Error("Charts unavailable"))
       .mockResolvedValueOnce(seededSummary);
 
     const user = userEvent.setup();
-    renderDashboard();
+    renderAnalytics();
 
     await waitFor(() => {
       expect(screen.getByRole("alert")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("Could not load dashboard")).toBeInTheDocument();
-    expect(screen.getByText("Network down")).toBeInTheDocument();
+    expect(screen.getByText("Could not load analytics")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Try again" }));
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("article", { name: "Total Projects: 5" }),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Project Progress")).toBeInTheDocument();
     });
-  });
-
-  it("shows an empty state when the portfolio has no projects", async () => {
-    vi.mocked(dashboardApi.getDashboardSummary).mockResolvedValue(
-      emptySummary,
-    );
-
-    renderDashboard();
-
-    await waitFor(() => {
-      expect(screen.getByText("No projects yet")).toBeInTheDocument();
-    });
-
-    expect(
-      screen.getByRole("article", { name: "Total Projects: 0" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Create project" }),
-    ).toBeInTheDocument();
   });
 });
