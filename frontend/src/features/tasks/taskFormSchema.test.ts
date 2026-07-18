@@ -69,4 +69,21 @@ describe("validateTaskForm — required fields", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("rejects description longer than 2000 characters", () => {
+    const result = validateTaskForm({
+      ...validForm,
+      description: "x".repeat(2001),
+    });
+    expect(result.success).toBe(false);
+    expect(firstError(result)?.message).toMatch(/at most 2000/i);
+  });
+
+  it("rejects an invalid priority", () => {
+    const result = validateTaskForm({
+      ...validForm,
+      priority: "URGENT",
+    });
+    expect(result.success).toBe(false);
+  });
 });

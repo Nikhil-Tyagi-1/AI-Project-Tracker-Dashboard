@@ -85,4 +85,33 @@ describe("persistTaskMove", () => {
     expect(applyServerTask).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith("Network down");
   });
+
+  it("applies optimistic state before awaiting the network call", async () => {
+    const previous = [makeTask("t1", "TODO")];
+    const next = [makeTask("t1", "IN_PROGRESS")];
+    const order: string[] = [];
+
+    const persist = vi.fn().mockImplementation(async () => {
+      order.push("persist");
+      return next[0]!;
+    });
+
+    await persistTaskMove({
+      previousTasks: previous,
+      nextTasks: next,
+      taskId: "t1",
+      patch: { status: "IN_PROGRESS", sortOrder: 0 },
+      applyOptimistic: () => {
+        order.push("optimistic");
+      },
+      persist,
+      applyServerTask: () => {
+        order.push("server");
+      },
+      rollback: vi.fn(),
+      onError: vi.fn(),
+    });
+
+    expect(order).toEqual(["optimistic", "persist", "server"]);
+  });
 });

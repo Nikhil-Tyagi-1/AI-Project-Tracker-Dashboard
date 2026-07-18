@@ -2,7 +2,7 @@
 
 > **App routes:** `/projects`, `/projects/new`, `/projects/:id`, `/projects/:id/edit`  
 > **API:** [`docs/api/projects.md`](../api/projects.md)  
-> **Related:** [`frontend conventions`](../frontend/conventions.md), Kanban board (Milestone 7)
+> **Related:** [`frontend conventions`](../frontend/conventions.md), [`Kanban & Tasks`](./kanban.md)
 
 The Projects feature is the portfolio CRUD surface for AI Project Tracker Pro. Users can search and filter the list, open details, create or edit projects through a shared form, and archive or restore records.
 
@@ -115,7 +115,7 @@ Tests: `frontend/src/features/projects/projectFormSchema.test.ts` and `ProjectFo
 ## Detail page extras
 
 - **Task summary** loads `GET /api/tasks?projectId=…` and shows totals by Kanban status (or empty/error states).
-- **Open Kanban board** links to `/kanban?projectId=:id` (board UI is Milestone 7).
+- **Open Kanban board** links to `/kanban?projectId=:id` — see [`kanban.md`](./kanban.md).
 
 ---
 

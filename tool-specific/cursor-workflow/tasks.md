@@ -125,7 +125,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Add Kanban filters (priority, assignee) and task title search
 - [x] `[FE]` Support horizontal column scroll on small screens
 - [x] `[TEST]` Test optimistic update rollback behavior (unit or integration)
-- [ ] `[DOC]` Document Kanban behavior and failure handling
+- [x] `[DOC]` Document Kanban behavior and failure handling
 
 ---
 

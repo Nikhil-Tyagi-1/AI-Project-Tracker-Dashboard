@@ -112,4 +112,24 @@ describe("computeTaskStatusChange", () => {
       result?.nextTasks.filter((task) => task.status === "DONE").map((t) => t.id),
     ).toEqual(["t1"]);
   });
+
+  it("supports the accessible menu path across intermediate columns", () => {
+    const toReview = computeTaskStatusChange(board, "t1", "IN_REVIEW");
+    expect(toReview?.patch).toEqual({ status: "IN_REVIEW", sortOrder: 0 });
+    expect(
+      toReview?.nextTasks.find((task) => task.id === "t1")?.status,
+    ).toBe("IN_REVIEW");
+
+    const toProgress = computeTaskStatusChange(board, "t1", "IN_PROGRESS");
+    expect(toProgress?.patch).toEqual({ status: "IN_PROGRESS", sortOrder: 1 });
+    expect(
+      toProgress?.nextTasks
+        .filter((task) => task.status === "IN_PROGRESS")
+        .map((task) => task.id),
+    ).toEqual(["t3", "t1"]);
+  });
+
+  it("returns null for an unknown task id", () => {
+    expect(computeTaskStatusChange(board, "missing", "DONE")).toBeNull();
+  });
 });

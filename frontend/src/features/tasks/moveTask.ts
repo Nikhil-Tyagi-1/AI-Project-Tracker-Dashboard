@@ -1,3 +1,4 @@
+"use client" 
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { TASK_STATUS_VALUES, type TaskStatus } from "@/constants/enums";
