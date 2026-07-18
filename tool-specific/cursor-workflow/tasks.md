@@ -162,7 +162,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 10 — Documentation & handoff
 
-- [ ] `[DOC]` Complete root README: prerequisites, install, migrate, seed, run FE/BE, test, env vars
+- [x] `[DOC]` Complete root README: prerequisites, install, migrate, seed, run FE/BE, test, env vars
 - [x] `[DOC]` Add API overview linking to project/task/dashboard examples
 - [x] `[DOC]` Add feature docs for Projects, Kanban, Dashboard/Analytics, Settings — Settings feature doc deferred (page is a placeholder)
 - [ ] `[DOC]` Cross-link `project-context.md`, `spec.md`, `acceptance-criteria.md`, and this task list
