@@ -185,4 +185,53 @@ describe("useKanbanTaskMove — status update flow", () => {
 
     expect(inProgress.map((item) => item.id)).toEqual(["t2", "t1"]);
   });
+
+  it("applies optimistic status from the menu path before the API resolves", async () => {
+    const store = createTestStore(initialTasks);
+    const saved = makeTask({
+      id: "t1",
+      status: "IN_REVIEW",
+      sortOrder: 0,
+      title: "One",
+    });
+
+    let resolveUpdate: ((value: Task) => void) | undefined;
+    vi.mocked(tasksApi.updateTask).mockImplementation(
+      () =>
+        new Promise<Task>((resolve) => {
+          resolveUpdate = resolve;
+        }),
+    );
+
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    );
+
+    const { result } = renderHook(() => useKanbanTaskMove(), { wrapper });
+
+    let movePromise: Promise<boolean> | undefined;
+    await act(async () => {
+      movePromise = result.current.changeTaskStatus("t1", "IN_REVIEW");
+    });
+
+    await waitFor(() => {
+      expect(
+        store.getState().tasks.items.find((item) => item.id === "t1")?.status,
+      ).toBe("IN_REVIEW");
+    });
+
+    expect(tasksApi.updateTask).toHaveBeenCalledWith("t1", {
+      status: "IN_REVIEW",
+      sortOrder: 0,
+    });
+
+    await act(async () => {
+      resolveUpdate?.(saved);
+      await movePromise;
+    });
+
+    expect(
+      store.getState().tasks.items.find((item) => item.id === "t1")?.status,
+    ).toBe("IN_REVIEW");
+  });
 });
