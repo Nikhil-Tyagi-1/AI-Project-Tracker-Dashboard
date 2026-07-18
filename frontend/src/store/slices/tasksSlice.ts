@@ -288,6 +288,17 @@ const tasksSlice = createSlice({
       state.detailStatus = "idle";
       state.detailError = null;
     },
+    /** Replace the full task list (optimistic Kanban moves / rollback). */
+    replaceTasks(state, action: PayloadAction<Task[]>) {
+      state.items = action.payload;
+    },
+    /** Merge a single task into the list after a successful mutation. */
+    upsertTaskLocal(state, action: PayloadAction<Task>) {
+      state.items = upsertTask(state.items, action.payload);
+      if (state.selectedTask?.id === action.payload.id) {
+        state.selectedTask = action.payload;
+      }
+    },
     clearListError(state) {
       state.listError = null;
     },
@@ -445,6 +456,8 @@ export const {
   clearProjectContext,
   setSelectedTask,
   clearSelectedTask,
+  replaceTasks,
+  upsertTaskLocal,
   clearListError,
   clearDetailError,
   clearMutationError,

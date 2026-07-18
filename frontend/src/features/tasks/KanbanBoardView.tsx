@@ -11,15 +11,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { EmptyState, ErrorState } from "@/components/ui";
 import { appRoutes } from "@/constants/routes";
-import { TASK_STATUS_VALUES } from "@/constants/enums";
 import { motionPresets } from "@/constants/motion";
+import { KanbanBoard } from "@/features/tasks/components/KanbanBoard";
 import { KanbanBoardSkeleton } from "@/features/tasks/components/KanbanBoardSkeleton";
-import { KanbanColumn } from "@/features/tasks/components/KanbanColumn";
 import {
   KanbanToolbar,
   type KanbanProjectOption,
 } from "@/features/tasks/components/KanbanToolbar";
-import { groupTasksByStatus } from "@/features/tasks/groupTasksByStatus";
+import { useKanbanTaskMove } from "@/features/tasks/hooks/useKanbanTaskMove";
 import { getProjects } from "@/services/api/projects";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
@@ -35,13 +34,13 @@ import {
 import { getApiErrorMessage } from "@/utils/apiError";
 
 /**
- * Kanban board feature view — project-scoped columns by task status.
- * Drag-and-drop persistence is intentionally deferred.
+ * Kanban board feature view — project-scoped columns with optimistic drag-and-drop.
  */
 export function KanbanBoardView() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { moveTaskTo, changeTaskStatus } = useKanbanTaskMove();
 
   const tasks = useAppSelector(selectTasks);
   const filters = useAppSelector(selectTasksFilters);
@@ -97,8 +96,6 @@ export function KanbanBoardView() {
     }
     void dispatch(fetchTasks(filtersToListParams(filters)));
   }, [currentProjectId, dispatch, filters]);
-
-  const tasksByStatus = useMemo(() => groupTasksByStatus(tasks), [tasks]);
 
   const selectedProjectName = useMemo(() => {
     return projects.find((project) => project.id === currentProjectId)?.name;
@@ -210,36 +207,11 @@ export function KanbanBoardView() {
                 </Typography>
               ) : null}
 
-              <Box
-                role="region"
-                aria-label="Kanban columns"
-                sx={{
-                  display: "flex",
-                  alignItems: "stretch",
-                  gap: 2,
-                  overflowX: "auto",
-                  pb: 1,
-                  mx: { xs: -2, sm: -3 },
-                  px: { xs: 2, sm: 3 },
-                  WebkitOverflowScrolling: "touch",
-                  scrollSnapType: { xs: "x mandatory", md: "none" },
-                }}
-              >
-                {TASK_STATUS_VALUES.map((status) => (
-                  <Box
-                    key={status}
-                    sx={{
-                      display: "flex",
-                      scrollSnapAlign: { xs: "start", md: "none" },
-                    }}
-                  >
-                    <KanbanColumn
-                      status={status}
-                      tasks={tasksByStatus[status]}
-                    />
-                  </Box>
-                ))}
-              </Box>
+              <KanbanBoard
+                tasks={tasks}
+                onMoveTask={moveTaskTo}
+                onStatusChange={changeTaskStatus}
+              />
             </Stack>
           </motion.div>
         ) : null}

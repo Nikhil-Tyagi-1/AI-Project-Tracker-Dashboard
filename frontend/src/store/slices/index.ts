@@ -100,8 +100,10 @@ export {
   setSelectedTask,
   setSort as setTasksSort,
   setStatusFilter as setTasksStatusFilter,
+  replaceTasks,
   tasksReducer,
   updateTask,
+  upsertTaskLocal,
 } from "@/store/slices/tasksSlice";
 export type {
   TasksFilterState,

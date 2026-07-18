@@ -1,5 +1,10 @@
 "use client";
 
+import { useDroppable } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -19,14 +24,26 @@ const columnAccent: Record<TaskStatus, string> = {
 export type KanbanColumnProps = {
   status: TaskStatus;
   tasks: Task[];
+  onStatusChange: (taskId: string, status: TaskStatus) => void;
+  disabled?: boolean;
 };
 
 /**
- * Single Kanban status column with a header count and task cards.
+ * Droppable Kanban status column with sortable task cards.
  */
-export function KanbanColumn({ status, tasks }: KanbanColumnProps) {
+export function KanbanColumn({
+  status,
+  tasks,
+  onStatusChange,
+  disabled = false,
+}: KanbanColumnProps) {
   const label = taskStatusLabels[status];
   const accent = columnAccent[status];
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+    data: { type: "column", status },
+    disabled,
+  });
 
   return (
     <Box
@@ -39,10 +56,11 @@ export function KanbanColumn({ status, tasks }: KanbanColumnProps) {
         minWidth: { xs: 260, sm: 280 },
         maxWidth: { xs: 300, md: "none" },
         border: 1,
-        borderColor: "divider",
+        borderColor: isOver ? "primary.main" : "divider",
         borderRadius: 1,
-        bgcolor: "action.hover",
+        bgcolor: isOver ? "action.selected" : "action.hover",
         overflow: "hidden",
+        transition: "border-color 0.15s ease, background-color 0.15s ease",
       }}
     >
       <Box
@@ -86,40 +104,54 @@ export function KanbanColumn({ status, tasks }: KanbanColumnProps) {
         </Stack>
       </Box>
 
-      <Stack
-        spacing={1.25}
-        component="ul"
-        aria-label={`${label} tasks`}
-        sx={{
-          listStyle: "none",
-          m: 0,
-          p: 1.25,
-          flex: 1,
-          minHeight: 120,
-          overflowY: "auto",
-        }}
+      <SortableContext
+        id={status}
+        items={tasks.map((task) => task.id)}
+        strategy={verticalListSortingStrategy}
       >
-        {tasks.length === 0 ? (
-          <Box
-            component="li"
-            sx={{
-              py: 3,
-              px: 1,
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="caption" color="text.secondary">
-              No tasks
-            </Typography>
-          </Box>
-        ) : (
-          tasks.map((task) => (
-            <Box key={task.id} component="li" sx={{ m: 0, p: 0 }}>
-              <TaskCard task={task} />
+        <Stack
+          ref={setNodeRef}
+          spacing={1.25}
+          component="ul"
+          aria-label={`${label} tasks`}
+          sx={{
+            listStyle: "none",
+            m: 0,
+            p: 1.25,
+            flex: 1,
+            minHeight: 120,
+            overflowY: "auto",
+          }}
+        >
+          {tasks.length === 0 ? (
+            <Box
+              component="li"
+              sx={{
+                py: 3,
+                px: 1,
+                textAlign: "center",
+                border: "1px dashed",
+                borderColor: isOver ? "primary.main" : "divider",
+                borderRadius: 1,
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                {isOver ? "Drop here" : "No tasks"}
+              </Typography>
             </Box>
-          ))
-        )}
-      </Stack>
+          ) : (
+            tasks.map((task) => (
+              <Box key={task.id} component="li" sx={{ m: 0, p: 0 }}>
+                <TaskCard
+                  task={task}
+                  onStatusChange={onStatusChange}
+                  disabled={disabled}
+                />
+              </Box>
+            ))
+          )}
+        </Stack>
+      </SortableContext>
     </Box>
   );
 }
