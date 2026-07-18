@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import { dashboardReducer } from "@/store/slices/dashboardSlice";
 import { projectsReducer } from "@/store/slices/projectsSlice";
 import { tasksReducer } from "@/store/slices/tasksSlice";
 import { uiReducer } from "@/store/slices/uiSlice";
@@ -17,7 +18,7 @@ export const makeStore = () =>
       ui: uiReducer,
       projects: projectsReducer,
       tasks: tasksReducer,
-      // dashboard: dashboardReducer,
+      dashboard: dashboardReducer,
     },
     devTools: process.env.NODE_ENV !== "production",
   });

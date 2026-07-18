@@ -109,3 +109,24 @@ export type {
   TasksFilterState,
   TasksState,
 } from "@/store/slices/tasksSlice";
+
+export {
+  clearDashboardErrors,
+  clearInsightsError,
+  clearSummaryError,
+  dashboardReducer,
+  fetchDashboardInsights,
+  fetchDashboardSummary,
+  resetDashboard,
+  selectDashboardCharts,
+  selectDashboardInsights,
+  selectDashboardInsightsError,
+  selectDashboardInsightsLoading,
+  selectDashboardInsightsStatus,
+  selectDashboardMetrics,
+  selectDashboardState,
+  selectDashboardSummaryError,
+  selectDashboardSummaryLoading,
+  selectDashboardSummaryStatus,
+} from "@/store/slices/dashboardSlice";
+export type { DashboardState } from "@/store/slices/dashboardSlice";

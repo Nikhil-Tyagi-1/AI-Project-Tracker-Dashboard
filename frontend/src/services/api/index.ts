@@ -18,3 +18,8 @@ export {
   tasksApi,
   updateTask,
 } from "@/services/api/tasks";
+export {
+  dashboardApi,
+  getDashboardInsights,
+  getDashboardSummary,
+} from "@/services/api/dashboard";

@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/components/layout";
+import { DashboardView } from "@/features/dashboard";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
 /**
- * Dashboard route placeholder — feature content is implemented in Milestone 8.
+ * Dashboard route — portfolio metric cards from `/api/dashboard/summary`.
+ * Charts and Smart Insights land in follow-up Milestone 8 work.
  */
 export default function DashboardPage() {
-  return (
-    <PagePlaceholder
-      title="Dashboard"
-      description="Portfolio metrics, recent activity, charts, and Smart Insights will appear here once the dashboard feature is implemented."
-    />
-  );
+  return <DashboardView />;
 }

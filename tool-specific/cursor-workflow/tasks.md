@@ -131,8 +131,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 8 — Dashboard, Analytics, Smart Insights
 
-- [ ] `[FE]` Build Dashboard page layout with metric cards
-- [ ] `[FE]` Fetch and render `/dashboard/summary` into cards
+- [x] `[FE]` Build Dashboard page layout with metric cards
+- [x] `[FE]` Fetch and render `/dashboard/summary` into cards
 - [ ] `[FE]` Add Project Progress chart
 - [ ] `[FE]` Add Task Status pie/donut chart
 - [ ] `[FE]` Add Team Workload bar chart

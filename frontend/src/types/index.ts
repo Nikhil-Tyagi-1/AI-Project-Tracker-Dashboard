@@ -35,3 +35,14 @@ export type {
   TaskStatusSummary,
   UpdateTaskInput,
 } from "@/types/task";
+export type {
+  ChartDataPoint,
+  DashboardCharts,
+  DashboardInsight,
+  DashboardInsights,
+  DashboardMetrics,
+  DashboardSummary,
+  InsightCategory,
+  InsightSeverity,
+  MonthlyActivityPoint,
+} from "@/types/dashboard";
