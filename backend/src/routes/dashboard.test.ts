@@ -207,6 +207,41 @@ describe("GET /api/dashboard/summary", () => {
     expect(metrics.pendingTasks).toBeGreaterThanOrEqual(1);
     expect(metrics.completionPercentage).toBeGreaterThanOrEqual(0);
     expect(metrics.completionPercentage).toBeLessThanOrEqual(100);
+
+    // Aggregates must be internally consistent with the seeded fixtures.
+    expect(
+      (metrics.completedTasks as number) + (metrics.pendingTasks as number),
+    ).toBe(metrics.totalTasks);
+    expect(metrics.completionPercentage).toBe(
+      Math.round(
+        ((metrics.completedTasks as number) / (metrics.totalTasks as number)) *
+          100,
+      ),
+    );
+  });
+
+  it("reflects seeded fixture projects in summary metric floors", async () => {
+    const res = await getSummary();
+    const { metrics, charts } = res.body.data as {
+      metrics: {
+        activeProjects: number;
+        atRiskProjects: number;
+        completedProjects: number;
+      };
+      charts: { projectProgress: Array<{ label: string; value: number }> };
+    };
+
+    // Each fixture status bucket is represented at least once in progress series.
+    const byLabel = Object.fromEntries(
+      charts.projectProgress.map((point) => [point.label, point.value]),
+    );
+    expect(byLabel[FIXTURE_PROJECT_NAMES.active]).toBe(40);
+    expect(byLabel[FIXTURE_PROJECT_NAMES.atRisk]).toBe(20);
+    expect(byLabel[FIXTURE_PROJECT_NAMES.completed]).toBe(100);
+
+    expect(metrics.activeProjects).toBeGreaterThanOrEqual(1);
+    expect(metrics.atRiskProjects).toBeGreaterThanOrEqual(1);
+    expect(metrics.completedProjects).toBeGreaterThanOrEqual(1);
   });
 
   it("returns chart-ready datasets that are non-empty with seeded fixtures", async () => {
@@ -234,14 +269,31 @@ describe("GET /api/dashboard/summary", () => {
     for (const point of charts.projectProgress) {
       expect(typeof point.label).toBe("string");
       expect(typeof point.value).toBe("number");
+      expect(point.value).toBeGreaterThanOrEqual(0);
+      expect(point.value).toBeLessThanOrEqual(100);
     }
+
+    // Ordered by progress desc then name asc — completed (100) precedes active (40).
+    const fixtureProgress = charts.projectProgress.filter((point) =>
+      Object.values(FIXTURE_PROJECT_NAMES).includes(
+        point.label as (typeof FIXTURE_PROJECT_NAMES)[keyof typeof FIXTURE_PROJECT_NAMES],
+      ),
+    );
+    expect(fixtureProgress.map((p) => p.label)).toEqual([
+      FIXTURE_PROJECT_NAMES.completed,
+      FIXTURE_PROJECT_NAMES.active,
+      FIXTURE_PROJECT_NAMES.atRisk,
+    ]);
 
     expect(Array.isArray(charts.taskStatusDistribution)).toBe(true);
     expect(charts.taskStatusDistribution).toHaveLength(4);
     const statusLabels = charts.taskStatusDistribution.map((p) => p.label);
-    expect(statusLabels).toEqual(
-      expect.arrayContaining(["To Do", "In Progress", "In Review", "Done"]),
-    );
+    expect(statusLabels).toEqual([
+      "To Do",
+      "In Progress",
+      "In Review",
+      "Done",
+    ]);
     expect(
       charts.taskStatusDistribution.every((point) => point.value >= 0),
     ).toBe(true);
@@ -249,11 +301,25 @@ describe("GET /api/dashboard/summary", () => {
       charts.taskStatusDistribution.reduce((sum, point) => sum + point.value, 0),
     ).toBeGreaterThan(0);
 
+    // Seeded fixtures cover every Kanban status (TODO has two rows).
+    const statusByLabel = Object.fromEntries(
+      charts.taskStatusDistribution.map((point) => [point.label, point.value]),
+    );
+    expect(statusByLabel["To Do"]).toBeGreaterThanOrEqual(2);
+    expect(statusByLabel["In Progress"]).toBeGreaterThanOrEqual(1);
+    expect(statusByLabel["In Review"]).toBeGreaterThanOrEqual(1);
+    expect(statusByLabel["Done"]).toBeGreaterThanOrEqual(1);
+
     expect(Array.isArray(charts.teamWorkload)).toBe(true);
     expect(charts.teamWorkload.length).toBeGreaterThan(0);
     expect(
       charts.teamWorkload.some(
-        (point) => point.label === "Dashboard Test Assignee" && point.value >= 1,
+        (point) => point.label === "Dashboard Test Assignee" && point.value >= 4,
+      ),
+    ).toBe(true);
+    expect(
+      charts.teamWorkload.some(
+        (point) => point.label === "Unassigned" && point.value >= 1,
       ),
     ).toBe(true);
 
@@ -269,6 +335,10 @@ describe("GET /api/dashboard/summary", () => {
         (point) => point.created > 0 || point.updated > 0,
       ),
     ).toBe(true);
+
+    // Labels are oldest → newest across a contiguous 6-month window.
+    const labels = charts.monthlyActivity.map((point) => point.label);
+    expect([...labels].sort()).toEqual(labels);
   });
 
   it("excludes archived fixture projects from aggregates", async () => {
@@ -357,5 +427,38 @@ describe("GET /api/dashboard/insights", () => {
     expect(new Date(payload.generatedAt).toISOString()).toBe(
       payload.generatedAt,
     );
+  });
+
+  it("emits the at-risk insight from the seeded AT_RISK fixture", async () => {
+    const res = await getInsights();
+    const insights = res.body.data.insights as Array<{
+      id: string;
+      severity: string;
+      title: string;
+      category: string;
+      message: string;
+    }>;
+
+    const atRisk = insights.find((insight) => insight.id === "insight-at-risk");
+    expect(atRisk).toBeDefined();
+    expect(atRisk?.category).toBe("risk");
+    expect(["warning", "critical"]).toContain(atRisk?.severity);
+    expect(atRisk?.title).toMatch(/at risk/i);
+    expect(atRisk?.message.length).toBeGreaterThan(0);
+  });
+
+  it("does not call an external AI provider (deterministic payload shape)", async () => {
+    const first = await getInsights();
+    const second = await getInsights();
+
+    const firstIds = (
+      first.body.data.insights as Array<{ id: string }>
+    ).map((insight) => insight.id);
+    const secondIds = (
+      second.body.data.insights as Array<{ id: string }>
+    ).map((insight) => insight.id);
+
+    expect(firstIds).toEqual(secondIds);
+    expect(firstIds).toContain("insight-at-risk");
   });
 });

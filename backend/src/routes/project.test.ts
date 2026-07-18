@@ -321,6 +321,22 @@ describe("GET /api/projects", () => {
     projects.forEach((p) => expect(p.priority).toBe("CRITICAL"));
   });
 
+  it("filters by owner display name", async () => {
+    await seedProject({ name: "Owner Filter Project" });
+    const res = await request(app).get(
+      "/api/projects?owner=Project Test Owner",
+    );
+    expect(res.status).toBe(200);
+    const projects = res.body.data as Array<{
+      name: string;
+      owner: { name: string };
+    }>;
+    expect(projects.some((p) => p.name === "Owner Filter Project")).toBe(true);
+    projects.forEach((p) =>
+      expect(p.owner.name).toMatch(/Project Test Owner/i),
+    );
+  });
+
   it("returns 400 for an invalid status filter", async () => {
     const res = await request(app).get("/api/projects?status=UNKNOWN");
     expect(res.status).toBe(400);
@@ -331,6 +347,258 @@ describe("GET /api/projects", () => {
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBeLessThanOrEqual(1);
     expect(res.body.meta.pageSize).toBe(1);
+  });
+
+  // ---- Search by name (q) — AC-S01 / AC-S06 / AC-TEST02 -------------------
+
+  describe("search by name (q)", () => {
+    beforeEach(async () => {
+      await seedProject({
+        name: "M9 Search Alpha Portal",
+        description: "Unrelated description text",
+      });
+      await seedProject({
+        name: "M9 Search Beta API",
+        description: "Includes Portal keyword in description",
+      });
+      await seedProject({ name: "M9 Search Gamma Mobile" });
+    });
+
+    it("returns case-insensitive partial matches on name", async () => {
+      const res = await request(app).get("/api/projects?q=portal");
+      expect(res.status).toBe(200);
+
+      const names = (res.body.data as Array<{ name: string }>).map((p) => p.name);
+      expect(names).toContain("M9 Search Alpha Portal");
+      // Description match is also allowed by the API contract.
+      expect(names).toContain("M9 Search Beta API");
+      expect(names).not.toContain("M9 Search Gamma Mobile");
+    });
+
+    it("matches regardless of query casing", async () => {
+      const res = await request(app).get("/api/projects?q=ALPHA PORTAL");
+      expect(res.status).toBe(200);
+      const names = (res.body.data as Array<{ name: string }>).map((p) => p.name);
+      expect(names).toContain("M9 Search Alpha Portal");
+    });
+
+    it("returns an empty data array when nothing matches", async () => {
+      const res = await request(app).get(
+        "/api/projects?q=zzz-no-such-project-m9-search",
+      );
+      expect(res.status).toBe(200);
+      expect(res.body.data).toEqual([]);
+      expect(res.body.meta.total).toBe(0);
+    });
+
+    it("does not mutate projects when searching", async () => {
+      const before = await prisma.project.findMany({
+        where: { ownerId: testOwnerId },
+        select: { id: true, name: true, updatedAt: true },
+        orderBy: { name: "asc" },
+      });
+
+      await request(app).get("/api/projects?q=portal");
+
+      const after = await prisma.project.findMany({
+        where: { ownerId: testOwnerId },
+        select: { id: true, name: true, updatedAt: true },
+        orderBy: { name: "asc" },
+      });
+      expect(after).toEqual(before);
+    });
+  });
+
+  // ---- Combined filters (AND) — AC-F04 / AC-TEST02 ------------------------
+
+  describe("combined filters (status + priority + owner)", () => {
+    let otherOwnerId: string;
+
+    beforeAll(async () => {
+      const other = await prisma.user.create({
+        data: {
+          email: `project-other-owner-${Date.now()}@test.invalid`,
+          name: "M9 Other Filter Owner",
+        },
+      });
+      otherOwnerId = other.id;
+    });
+
+    afterAll(async () => {
+      await prisma.project.deleteMany({ where: { ownerId: otherOwnerId } });
+      await prisma.user.delete({ where: { id: otherOwnerId } });
+    });
+
+    beforeEach(async () => {
+      await seedProject({
+        name: "M9 Combined Match",
+        status: "IN_PROGRESS",
+        priority: "HIGH",
+      });
+      await seedProject({
+        name: "M9 Combined Wrong Priority",
+        status: "IN_PROGRESS",
+        priority: "LOW",
+      });
+      await seedProject({
+        name: "M9 Combined Wrong Status",
+        status: "ON_HOLD",
+        priority: "HIGH",
+      });
+
+      // Same status+priority as the match, but a different owner — must be excluded.
+      await createProject({
+        name: "M9 Combined Other Owner",
+        ownerId: otherOwnerId,
+        status: "IN_PROGRESS",
+        priority: "HIGH",
+      });
+    });
+
+    afterEach(async () => {
+      await prisma.project.deleteMany({ where: { ownerId: otherOwnerId } });
+    });
+
+    it("returns only projects that satisfy all three filters simultaneously", async () => {
+      const res = await request(app).get(
+        "/api/projects?status=IN_PROGRESS&priority=HIGH&owner=Project Test Owner",
+      );
+      expect(res.status).toBe(200);
+
+      const projects = res.body.data as Array<{
+        name: string;
+        status: string;
+        priority: string;
+        owner: { name: string };
+      }>;
+
+      expect(projects.length).toBeGreaterThan(0);
+      projects.forEach((p) => {
+        expect(p.status).toBe("IN_PROGRESS");
+        expect(p.priority).toBe("HIGH");
+        expect(p.owner.name).toMatch(/Project Test Owner/i);
+      });
+
+      const names = projects.map((p) => p.name);
+      expect(names).toContain("M9 Combined Match");
+      expect(names).not.toContain("M9 Combined Wrong Priority");
+      expect(names).not.toContain("M9 Combined Wrong Status");
+      expect(names).not.toContain("M9 Combined Other Owner");
+    });
+  });
+
+  // ---- Sorting — AC-F06 / AC-TEST02 ---------------------------------------
+
+  describe("sorting", () => {
+    /** Relative order of fixture names within a (possibly larger) result set. */
+    function fixtureOrder(
+      projects: Array<{ name: string }>,
+      prefix: string,
+    ): string[] {
+      return projects
+        .filter((p) => p.name.startsWith(prefix))
+        .map((p) => p.name);
+    }
+
+    beforeEach(async () => {
+      await seedProject({ name: "M9 Sort Charlie", progress: 30 });
+      await seedProject({ name: "M9 Sort Alpha", progress: 90 });
+      await seedProject({ name: "M9 Sort Bravo", progress: 10 });
+    });
+
+    it("sorts by name ascending", async () => {
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=name&sortOrder=asc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+      expect(fixtureOrder(res.body.data, "M9 Sort")).toEqual([
+        "M9 Sort Alpha",
+        "M9 Sort Bravo",
+        "M9 Sort Charlie",
+      ]);
+    });
+
+    it("sorts by name descending", async () => {
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=name&sortOrder=desc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+      expect(fixtureOrder(res.body.data, "M9 Sort")).toEqual([
+        "M9 Sort Charlie",
+        "M9 Sort Bravo",
+        "M9 Sort Alpha",
+      ]);
+    });
+
+    it("sorts by progress ascending", async () => {
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=progress&sortOrder=asc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+      expect(fixtureOrder(res.body.data, "M9 Sort")).toEqual([
+        "M9 Sort Bravo",
+        "M9 Sort Charlie",
+        "M9 Sort Alpha",
+      ]);
+    });
+
+    it("sorts by progress descending", async () => {
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=progress&sortOrder=desc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+      expect(fixtureOrder(res.body.data, "M9 Sort")).toEqual([
+        "M9 Sort Alpha",
+        "M9 Sort Charlie",
+        "M9 Sort Bravo",
+      ]);
+    });
+
+    it("sorts by createdAt ascending (oldest first among fixtures)", async () => {
+      // Sequential creates guarantee distinct createdAt ordering for fixtures.
+      await prisma.project.deleteMany({ where: { ownerId: testOwnerId } });
+      const first = await seedProject({ name: "M9 Created First" });
+      const second = await seedProject({ name: "M9 Created Second" });
+      const third = await seedProject({ name: "M9 Created Third" });
+
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=createdAt&sortOrder=asc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+
+      const ids = (res.body.data as Array<{ id: string; name: string }>)
+        .filter((p) => p.name.startsWith("M9 Created"))
+        .map((p) => p.id);
+      expect(ids).toEqual([first.id, second.id, third.id]);
+    });
+
+    it("sorts by updatedAt descending (most recently updated first)", async () => {
+      await prisma.project.deleteMany({ where: { ownerId: testOwnerId } });
+      const older = await seedProject({ name: "M9 Updated Older" });
+      const newer = await seedProject({ name: "M9 Updated Newer" });
+
+      // Bump updatedAt on the first project so it sorts ahead when desc.
+      await request(app)
+        .patch(`/api/projects/${older.id}`)
+        .send({ description: "Touched for updatedAt sort" });
+
+      const res = await request(app).get(
+        "/api/projects?owner=Project Test Owner&sortBy=updatedAt&sortOrder=desc&pageSize=100",
+      );
+      expect(res.status).toBe(200);
+
+      const ids = (res.body.data as Array<{ id: string; name: string }>)
+        .filter((p) => p.name.startsWith("M9 Updated"))
+        .map((p) => p.id);
+      expect(ids[0]).toBe(older.id);
+      expect(ids).toContain(newer.id);
+    });
+
+    it("returns 400 for an invalid sortBy value", async () => {
+      const res = await request(app).get("/api/projects?sortBy=title");
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe("VALIDATION_ERROR");
+    });
   });
 
   // ---- Archived excluded by default ---------------------------------------
@@ -358,12 +626,14 @@ describe("GET /api/projects", () => {
 
     it("meta.total only counts active projects by default", async () => {
       const project = await seedProject({ name: "Count Test Archived" });
-      const beforeRes = await request(app).get("/api/projects");
+      // Scope by owner so parallel suites sharing the DB cannot race the total.
+      const listUrl = "/api/projects?owner=Project Test Owner";
+      const beforeRes = await request(app).get(listUrl);
       const totalBefore = beforeRes.body.meta.total as number;
 
       await request(app).patch(`/api/projects/${project.id}/archive`);
 
-      const afterRes = await request(app).get("/api/projects");
+      const afterRes = await request(app).get(listUrl);
       expect(afterRes.body.meta.total).toBe(totalBefore - 1);
     });
   });
@@ -458,17 +728,93 @@ describe("PATCH /api/projects/:id", () => {
     expect(res.body.data.status).toBe("IN_PROGRESS");
   });
 
-  it("returns 400 for an invalid status transition (COMPLETED → AT_RISK)", async () => {
-    // Bring project to COMPLETED state first.
-    await request(app)
-      .patch(`/api/projects/${projectId}`)
-      .send({ status: "COMPLETED", progress: 100 });
+  // ---- Status transition rules — AC-P10 / AC-TEST02 -----------------------
 
-    const res = await request(app)
-      .patch(`/api/projects/${projectId}`)
-      .send({ status: "AT_RISK" });
-    expect(res.status).toBe(400);
-    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  describe("status transition rules", () => {
+    async function setStatus(
+      status: string,
+      progress?: number,
+    ): Promise<void> {
+      const body: Record<string, unknown> = { status };
+      if (progress !== undefined) body.progress = progress;
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send(body);
+      expect(res.status).toBe(200);
+    }
+
+    it("rejects COMPLETED → AT_RISK", async () => {
+      await setStatus("COMPLETED", 100);
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "AT_RISK" });
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe("VALIDATION_ERROR");
+      expect(res.body.error.message).toMatch(/not permitted/i);
+    });
+
+    it("rejects COMPLETED → ON_HOLD", async () => {
+      await setStatus("COMPLETED", 100);
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "ON_HOLD" });
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("allows COMPLETED → PLANNED (reopen)", async () => {
+      await setStatus("COMPLETED", 100);
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "PLANNED" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.status).toBe("PLANNED");
+    });
+
+    it("allows COMPLETED → IN_PROGRESS (reopen)", async () => {
+      await setStatus("COMPLETED", 100);
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "IN_PROGRESS" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.status).toBe("IN_PROGRESS");
+    });
+
+    it("allows IN_PROGRESS → AT_RISK", async () => {
+      await setStatus("IN_PROGRESS");
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "AT_RISK" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.status).toBe("AT_RISK");
+    });
+
+    it("leaves the database status unchanged when a transition is rejected", async () => {
+      await setStatus("COMPLETED", 100);
+
+      const before = await prisma.project.findUniqueOrThrow({
+        where: { id: projectId },
+        select: { status: true, progress: true, updatedAt: true },
+      });
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ status: "AT_RISK" });
+      expect(res.status).toBe(400);
+
+      const after = await prisma.project.findUniqueOrThrow({
+        where: { id: projectId },
+        select: { status: true, progress: true, updatedAt: true },
+      });
+      expect(after.status).toBe("COMPLETED");
+      expect(after.progress).toBe(100);
+      expect(after.updatedAt.getTime()).toBe(before.updatedAt.getTime());
+    });
   });
 
   it("returns 400 when setting COMPLETED without progress = 100", async () => {
@@ -478,13 +824,47 @@ describe("PATCH /api/projects/:id", () => {
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when updating an archived project", async () => {
-    await request(app).patch(`/api/projects/${projectId}/archive`);
-    const res = await request(app)
-      .patch(`/api/projects/${projectId}`)
-      .send({ name: "Attempt to rename archived" });
-    expect(res.status).toBe(400);
-    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  // ---- Archived update rejection — AC-P14 / AC-TEST02 ---------------------
+
+  describe("archived project update rejection", () => {
+    beforeEach(async () => {
+      await request(app).patch(`/api/projects/${projectId}/archive`);
+    });
+
+    it("returns 400 when updating an archived project", async () => {
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({ name: "Attempt to rename archived" });
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe("VALIDATION_ERROR");
+      expect(res.body.error.message).toMatch(/archived/i);
+    });
+
+    it("does not change archived project fields in the database", async () => {
+      const before = await prisma.project.findUniqueOrThrow({
+        where: { id: projectId },
+      });
+
+      const res = await request(app)
+        .patch(`/api/projects/${projectId}`)
+        .send({
+          name: "Should Not Persist",
+          priority: "CRITICAL",
+          progress: 77,
+          status: "IN_PROGRESS",
+        });
+      expect(res.status).toBe(400);
+
+      const after = await prisma.project.findUniqueOrThrow({
+        where: { id: projectId },
+      });
+      expect(after.name).toBe(before.name);
+      expect(after.priority).toBe(before.priority);
+      expect(after.progress).toBe(before.progress);
+      expect(after.status).toBe(before.status);
+      expect(after.isArchived).toBe(true);
+      expect(after.updatedAt.getTime()).toBe(before.updatedAt.getTime());
+    });
   });
 
   it("returns 409 when renaming to an existing active project name", async () => {
