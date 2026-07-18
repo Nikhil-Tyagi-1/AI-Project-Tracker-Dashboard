@@ -68,12 +68,12 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 4 — Dashboard & analytics API
 
-- [ ] `[BE]` Implement `GET /api/dashboard/summary` returning metric card aggregates
-- [ ] `[BE]` Return chart-ready series for: project progress, task status pie, team workload, monthly activity
-- [ ] `[BE]` Implement `GET /api/dashboard/insights` returning mock Smart Insights derived from current data
-- [ ] `[BE]` Optionally implement `GET /api/projects/stats` if kept separate from summary
-- [ ] `[TEST]` Integration-test summary/insights against seeded data (non-empty aggregates)
-- [ ] `[DOC]` Document dashboard endpoints and example payloads
+- [x] `[BE]` Implement `GET /api/dashboard/summary` returning metric card aggregates
+- [x] `[BE]` Return chart-ready series for: project progress, task status pie, team workload, monthly activity
+- [x] `[BE]` Implement `GET /api/dashboard/insights` returning mock Smart Insights derived from current data
+- [x] `[BE]` Optionally implement `GET /api/projects/stats` if kept separate from summary — deferred; covered by `/api/dashboard/summary`
+- [x] `[TEST]` Integration-test summary/insights against seeded data (non-empty aggregates)
+- [x] `[DOC]` Document dashboard endpoints and example payloads
 
 ---
 
