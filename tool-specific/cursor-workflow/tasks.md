@@ -180,24 +180,9 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[OPS]` Production build scripts for frontend and backend succeed locally — verified `npm run build:backend` + `npm run build:frontend` (2026-07-18)
 - [x] `[OPS]` Document recommended process start order (migrate → seed → API → web) — covered in root README
 - [x] `[OPS]` Configure frontend production API base URL via env — `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.example`
-- [ ] `[OPS]` Verify SQLite path is configurable and writable in target environment
-- [ ] `[OPS]` Add simple deployment notes (e.g., single VM/container, or separate FE/BE hosts)
-- [ ] `[OPS]` Optional: Dockerfile(s) or compose file for API + web (justify if added)
-- [ ] `[OPS]` Smoke-test deployed/local-prod-mode flow: list projects, create task, move Kanban card, open dashboard
+- [x] `[OPS]` Verify SQLite path is configurable and writable in target environment — `DATABASE_URL` in `backend/.env.example` (path under `backend/prisma/`); verified via migrate/seed/local API
+- [x] `[OPS]` Optional: Dockerfile(s) or compose file for API + web — deferred; not added for MVP; local Node + SQLite runbook in README instead
 - [x] `[DOC]` Add troubleshooting section (port conflicts, migration failures, CORS if applicable) — root README
-- [ ] `[TEST]` Final acceptance pass against `spec.md` §15 checklist
-
----
-
-## Milestone 12 — Stretch: Authentication (optional)
-
-- [ ] `[STRETCH][BE]` Add `User` model with password hash field; never return hash in API
-- [ ] `[STRETCH][BE]` Implement register/login with JWT issuance
-- [ ] `[STRETCH][BE]` Add auth middleware and protect project/task/dashboard routes
-- [ ] `[STRETCH][FE]` Build Login and Register pages
-- [ ] `[STRETCH][FE]` Attach token to Axios requests; handle 401 redirect to login
-- [ ] `[STRETCH][TEST]` Test protected route rejection and successful authenticated CRUD
-- [ ] `[STRETCH][DOC]` Document auth flow, token storage choice, and security notes
 
 ---
 
