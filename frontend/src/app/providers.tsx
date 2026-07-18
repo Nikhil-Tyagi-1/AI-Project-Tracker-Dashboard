@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { useRef } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
+import { ToastProvider } from "@/components/ui";
 import { makeStore, type AppStore } from "@/store";
 import { AppThemeProvider } from "@/theme/AppThemeProvider";
 
@@ -12,7 +13,7 @@ type AppProvidersProps = {
 };
 
 /**
- * Client-side providers for MUI theme + Redux store.
+ * Client-side providers for MUI theme, Redux store, and global toasts.
  * Kept separate from layout so the root layout can stay a Server Component.
  */
 export function AppProviders({ children }: AppProvidersProps) {
@@ -25,7 +26,9 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <AppRouterCacheProvider options={{ enableCssLayer: true }}>
       <AppThemeProvider>
-        <ReduxProvider store={storeRef.current}>{children}</ReduxProvider>
+        <ReduxProvider store={storeRef.current}>
+          <ToastProvider>{children}</ToastProvider>
+        </ReduxProvider>
       </AppThemeProvider>
     </AppRouterCacheProvider>
   );

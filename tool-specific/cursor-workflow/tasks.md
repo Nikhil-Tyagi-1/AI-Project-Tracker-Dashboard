@@ -84,8 +84,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Build app shell: top bar, side navigation, content area
 - [x] `[FE]` Add nav links for Dashboard, Projects, Kanban, Analytics, Settings
 - [x] `[FE]` Implement responsive drawer navigation for tablet/mobile breakpoints
-- [ ] `[FE]` Add global toast notification host
-- [ ] `[FE]` Add shared Skeleton, EmptyState, ErrorState, and ConfirmDialog components
+- [x] `[FE]` Add global toast notification host
+- [x] `[FE]` Add shared Skeleton, EmptyState, ErrorState, and ConfirmDialog components
 - [x] `[FE]` Configure Axios API client with base URL from env
 - [x] `[FE]` Configure Redux Toolkit store scaffolding
 - [x] `[FE]` Add shared constants/enums mirroring backend status and priority values
