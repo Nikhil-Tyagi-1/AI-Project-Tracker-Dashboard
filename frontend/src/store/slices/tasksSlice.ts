@@ -200,8 +200,16 @@ const tasksSlice = createSlice({
   initialState,
   reducers: {
     setCurrentProjectId(state, action: PayloadAction<string>) {
+      if (state.filters.projectId === action.payload) {
+        return;
+      }
       state.filters.projectId = action.payload;
       state.filters.page = 1;
+      // Drop previous board data so columns never flash another project's tasks.
+      state.items = [];
+      state.meta = null;
+      state.listStatus = "idle";
+      state.listError = null;
     },
     setSearchQuery(state, action: PayloadAction<string>) {
       state.filters.search = action.payload;

@@ -1,19 +1,45 @@
 import type { Metadata } from "next";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { Suspense } from "react";
 
-import { PagePlaceholder } from "@/components/layout";
+import { KanbanBoardView } from "@/features/tasks";
+import { KanbanBoardSkeleton } from "@/features/tasks/components/KanbanBoardSkeleton";
 
 export const metadata: Metadata = {
   title: "Kanban",
 };
 
+function KanbanPageFallback() {
+  return (
+    <Box component="section" aria-busy="true" aria-label="Loading Kanban">
+      <Stack spacing={3}>
+        <Stack spacing={0.75}>
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{ fontWeight: 700, letterSpacing: "-0.02em" }}
+          >
+            Kanban
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Loading board…
+          </Typography>
+        </Stack>
+        <KanbanBoardSkeleton />
+      </Stack>
+    </Box>
+  );
+}
+
 /**
- * Kanban route placeholder — feature content is implemented in Milestone 7.
+ * Kanban route — project-scoped task board by status columns.
  */
 export default function KanbanPage() {
   return (
-    <PagePlaceholder
-      title="Kanban"
-      description="Drag-and-drop task boards with TODO, In Progress, In Review, and Done columns will be available here in a later milestone."
-    />
+    <Suspense fallback={<KanbanPageFallback />}>
+      <KanbanBoardView />
+    </Suspense>
   );
 }

@@ -115,15 +115,15 @@ Each task is independently completable. Complete milestones in order unless a ta
 ## Milestone 7 — Kanban & tasks UI
 
 - [x] `[FE]` Add tasks API service methods (list, create, update, archive, restore)
-- [ ] `[FE]` Build Kanban page with four columns: TODO, IN_PROGRESS, IN_REVIEW, DONE
-- [ ] `[FE]` Add project selector / context for board scope
-- [ ] `[FE]` Render task cards (title, priority, assignee, due date)
+- [x] `[FE]` Build Kanban page with four columns: TODO, IN_PROGRESS, IN_REVIEW, DONE
+- [x] `[FE]` Add project selector / context for board scope
+- [x] `[FE]` Render task cards (title, priority, assignee, due date)
 - [ ] `[FE]` Implement drag-and-drop between columns with immediate UI update
 - [ ] `[FE]` Persist status changes via API; roll back UI and toast on failure
 - [ ] `[FE]` Add non-drag status alternative (select/menu) for accessibility
 - [ ] `[FE]` Add create-task dialog/form with RHF + Zod
 - [ ] `[FE]` Add Kanban filters (priority, assignee) and task title search
-- [ ] `[FE]` Support horizontal column scroll on small screens
+- [x] `[FE]` Support horizontal column scroll on small screens
 - [ ] `[TEST]` Test optimistic update rollback behavior (unit or integration)
 - [ ] `[DOC]` Document Kanban behavior and failure handling
 
