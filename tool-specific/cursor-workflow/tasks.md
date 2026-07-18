@@ -41,15 +41,15 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 2 — Projects API
 
-- [ ] `[BE]` Create Zod validators for project create/update bodies and list query params
-- [ ] `[BE]` Implement `ProjectService` (list with search/filter/sort, getById, create, update, archive, restore)
-- [ ] `[BE]` Enforce project field validation and status transition rules in the service layer
-- [ ] `[BE]` Enforce unique project name among non-archived projects (if adopted)
-- [ ] `[BE]` Implement project routes/controllers: `GET/POST /projects`, `GET/PATCH /projects/:id`, archive/restore
-- [ ] `[BE]` Exclude archived projects from default list queries
-- [ ] `[TEST]` Unit-test project validators (required fields, progress 0–100, date ordering)
-- [ ] `[TEST]` Integration-test project CRUD, archive, restore, and validation error shapes
-- [ ] `[DOC]` Document project API with request/response examples
+- [x] `[BE]` Create Zod validators for project create/update bodies and list query params
+- [x] `[BE]` Implement `ProjectService` (list with search/filter/sort, getById, create, update, archive, restore)
+- [x] `[BE]` Enforce project field validation and status transition rules in the service layer
+- [x] `[BE]` Enforce unique project name among non-archived projects (if adopted)
+- [x] `[BE]` Implement project routes/controllers: `GET/POST /projects`, `GET/PATCH /projects/:id`, archive/restore
+- [x] `[BE]` Exclude archived projects from default list queries
+- [x] `[TEST]` Unit-test project validators (required fields, progress 0–100, date ordering)
+- [x] `[TEST]` Integration-test project CRUD, archive, restore, and validation error shapes
+- [x] `[DOC]` Document project API with request/response examples
 
 ---
 
