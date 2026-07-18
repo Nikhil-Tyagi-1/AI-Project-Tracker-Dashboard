@@ -5,6 +5,8 @@ import { env } from "@/constants/env";
 /**
  * Shared Axios instance for all API modules under src/services.
  * Feature services should import `apiClient` instead of creating their own clients.
+ *
+ * Base URL comes from `NEXT_PUBLIC_API_BASE_URL` (see `.env.example`).
  */
 export const apiClient = axios.create({
   baseURL: env.apiBaseUrl,

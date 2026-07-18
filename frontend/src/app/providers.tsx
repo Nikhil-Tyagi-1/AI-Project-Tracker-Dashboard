@@ -1,20 +1,18 @@
 "use client";
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
 import { useRef } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { makeStore, type AppStore } from "@/store";
-import { theme } from "@/theme";
+import { AppThemeProvider } from "@/theme/AppThemeProvider";
 
 type AppProvidersProps = {
   children: React.ReactNode;
 };
 
 /**
- * Client-side providers for MUI + Redux.
+ * Client-side providers for MUI theme + Redux store.
  * Kept separate from layout so the root layout can stay a Server Component.
  */
 export function AppProviders({ children }: AppProvidersProps) {
@@ -26,10 +24,9 @@ export function AppProviders({ children }: AppProvidersProps) {
 
   return (
     <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <AppThemeProvider>
         <ReduxProvider store={storeRef.current}>{children}</ReduxProvider>
-      </ThemeProvider>
+      </AppThemeProvider>
     </AppRouterCacheProvider>
   );
 }

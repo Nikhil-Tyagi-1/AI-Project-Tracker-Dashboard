@@ -80,6 +80,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 ## Milestone 5 — Frontend shell & design system
 
 - [x] `[FE]` Configure MUI theme tokens (primary/secondary, typography, spacing, elevation, radius)
+- [x] `[FE]` Configure CssBaseline and AppThemeProvider
 - [ ] `[FE]` Build app shell: top bar, side navigation, content area
 - [ ] `[FE]` Add nav links for Dashboard, Projects, Kanban, Analytics, Settings
 - [ ] `[FE]` Implement responsive drawer navigation for tablet/mobile breakpoints

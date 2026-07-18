@@ -1,14 +1,23 @@
+import { colorTokens } from "@/theme/tokens";
+
 /**
- * Chart color tokens derived for Recharts usage.
+ * Chart color tokens derived from the design system for Recharts usage.
  * Prefer these over hardcoding hex values inside feature charts.
  */
 export const chartPalette = {
-  primary: "#0F4C81",
-  secondary: "#1F7A6C",
-  success: "#15803D",
-  warning: "#C2410C",
-  error: "#B91C1C",
-  info: "#0369A1",
+  primary: colorTokens.primary.main,
+  secondary: colorTokens.secondary.main,
+  success: colorTokens.success.main,
+  warning: colorTokens.warning.main,
+  error: colorTokens.error.main,
+  info: colorTokens.info.main,
   muted: "#94A3B8",
-  series: ["#0F4C81", "#1F7A6C", "#C2410C", "#0369A1", "#7C3AED", "#CA8A04"],
+  series: [
+    colorTokens.primary.main,
+    colorTokens.secondary.main,
+    colorTokens.warning.main,
+    colorTokens.info.main,
+    "#7C3AED",
+    "#CA8A04",
+  ],
 } as const;
