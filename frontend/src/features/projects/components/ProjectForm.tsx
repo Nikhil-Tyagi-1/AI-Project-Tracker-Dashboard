@@ -113,12 +113,13 @@ export function ProjectForm({
               error={Boolean(errors.ownerId)}
               disabled={isSubmitting || ownersLoading}
             >
-              <InputLabel id="project-owner-label">Owner</InputLabel>
+              <InputLabel id="project-owner-label" shrink>Owner</InputLabel>
               <Select
                 {...field}
                 labelId="project-owner-label"
                 label="Owner"
                 displayEmpty
+                notched
               >
                 <MenuItem value="">
                   <em>
@@ -169,8 +170,8 @@ export function ProjectForm({
                 error={Boolean(errors.status)}
                 disabled={isSubmitting}
               >
-                <InputLabel id="project-status-label">Status</InputLabel>
-                <Select {...field} labelId="project-status-label" label="Status">
+                <InputLabel id="project-status-label" shrink>Status</InputLabel>
+                <Select {...field} labelId="project-status-label" label="Status" displayEmpty notched>
                   {statusOptions.map((status) => (
                     <MenuItem key={status} value={status}>
                       {projectStatusLabels[status]}
@@ -192,11 +193,12 @@ export function ProjectForm({
                 error={Boolean(errors.priority)}
                 disabled={isSubmitting}
               >
-                <InputLabel id="project-priority-label">Priority</InputLabel>
+                <InputLabel id="project-priority-label" shrink>Priority</InputLabel>
                 <Select
                   {...field}
                   labelId="project-priority-label"
                   label="Priority"
+                  notched
                 >
                   {PRIORITY_VALUES.map((priority) => (
                     <MenuItem key={priority} value={priority}>

@@ -7,6 +7,7 @@ import {
   projectStatusLabels,
   type ProjectStatus as ProjectStatusType,
 } from "@/constants/enums";
+import { semanticChipSx } from "@/features/projects/components/semanticChipSx";
 import { colorTokens } from "@/theme/tokens";
 
 const statusColors: Record<ProjectStatusType, string> = {
@@ -34,9 +35,9 @@ export function ProjectStatusChip({
       size={size}
       variant="outlined"
       sx={{
+        ...semanticChipSx,
         borderColor: color,
         color,
-        fontWeight: 600,
         bgcolor: "transparent",
       }}
     />

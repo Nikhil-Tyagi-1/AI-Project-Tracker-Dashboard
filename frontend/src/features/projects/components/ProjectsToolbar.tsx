@@ -125,13 +125,14 @@ export function ProjectsToolbar({
         }}
       >
         <FormControl size="small" fullWidth>
-          <InputLabel id="projects-status-filter-label">Status</InputLabel>
+          <InputLabel id="projects-status-filter-label" shrink>Status</InputLabel>
           <Select
             labelId="projects-status-filter-label"
             label="Status"
             value={status}
             onChange={handleStatusChange}
             displayEmpty
+            notched
           >
             <MenuItem value="">
               <em>All statuses</em>
@@ -145,13 +146,14 @@ export function ProjectsToolbar({
         </FormControl>
 
         <FormControl size="small" fullWidth>
-          <InputLabel id="projects-priority-filter-label">Priority</InputLabel>
+          <InputLabel id="projects-priority-filter-label" shrink>Priority</InputLabel>
           <Select
             labelId="projects-priority-filter-label"
             label="Priority"
             value={priority}
             onChange={handlePriorityChange}
             displayEmpty
+            notched
           >
             <MenuItem value="">
               <em>All priorities</em>
@@ -179,12 +181,14 @@ export function ProjectsToolbar({
           sx={{ alignItems: "center", minWidth: 0 }}
         >
           <FormControl size="small" fullWidth>
-            <InputLabel id="projects-sort-by-label">Sort by</InputLabel>
+            <InputLabel id="projects-sort-by-label" shrink>Sort by</InputLabel>
             <Select
               labelId="projects-sort-by-label"
               label="Sort by"
               value={sortBy}
               onChange={handleSortByChange}
+              displayEmpty
+              notched
             >
               {SORT_OPTIONS.map((option) => (
                 <MenuItem key={option.value} value={option.value}>

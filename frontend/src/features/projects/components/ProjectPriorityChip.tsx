@@ -7,6 +7,7 @@ import {
   priorityLabels,
   type Priority as PriorityType,
 } from "@/constants/enums";
+import { semanticChipSx } from "@/features/projects/components/semanticChipSx";
 import { colorTokens } from "@/theme/tokens";
 
 const priorityColors: Record<PriorityType, string> = {
@@ -32,9 +33,9 @@ export function ProjectPriorityChip({
       label={priorityLabels[priority]}
       size={size}
       sx={{
+        ...semanticChipSx,
         bgcolor: color,
         color: "#FFFFFF",
-        fontWeight: 600,
       }}
     />
   );

@@ -81,10 +81,10 @@ export function ProjectMetadataSection({
       >
         <Stack>
           <MetaRow label="Status">
-            <ProjectStatusChip status={project.status} size="medium" />
+            <ProjectStatusChip status={project.status} />
           </MetaRow>
           <MetaRow label="Priority">
-            <ProjectPriorityChip priority={project.priority} size="medium" />
+            <ProjectPriorityChip priority={project.priority} />
           </MetaRow>
           <MetaRow label="Owner">
             <Typography variant="body1" sx={{ fontWeight: 600 }}>

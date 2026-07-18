@@ -43,6 +43,22 @@ function submitButton(container: HTMLElement, label = "Create task") {
 }
 
 describe("TaskForm validation (component)", () => {
+  it("does not show title errors before submit", async () => {
+    const user = userEvent.setup();
+    renderForm({
+      defaultValues: { ...defaultValues, title: "" },
+    });
+
+    const title = screen.getByLabelText(/title/i);
+    await user.clear(title);
+    await user.type(title, "ab");
+    await user.tab();
+
+    expect(
+      screen.queryByText(/title must be at least 3 characters/i),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows a title error when submitting an empty title", async () => {
     const user = userEvent.setup();
     const { onSubmit, container } = renderForm({

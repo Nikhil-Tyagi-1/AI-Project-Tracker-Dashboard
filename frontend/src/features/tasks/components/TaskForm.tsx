@@ -58,7 +58,9 @@ export function TaskForm({
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues,
-    mode: "onBlur",
+    // Validate only on submit — avoid errors on open or while typing.
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
 
   const resolvedSubmitLabel =
@@ -112,11 +114,13 @@ export function TaskForm({
                 error={Boolean(errors.status)}
                 disabled={isSubmitting}
               >
-                <InputLabel id="task-status-label">Status</InputLabel>
+                <InputLabel id="task-status-label" shrink>Status</InputLabel>
                 <Select
                   {...field}
                   labelId="task-status-label"
                   label="Status"
+                  displayEmpty
+                  notched
                 >
                   {TASK_STATUS_VALUES.map((status) => (
                     <MenuItem key={status} value={status}>
@@ -139,11 +143,13 @@ export function TaskForm({
                 error={Boolean(errors.priority)}
                 disabled={isSubmitting}
               >
-                <InputLabel id="task-priority-label">Priority</InputLabel>
+                <InputLabel id="task-priority-label" shrink>Priority</InputLabel>
                 <Select
                   {...field}
                   labelId="task-priority-label"
                   label="Priority"
+                  displayEmpty
+                  notched
                 >
                   {PRIORITY_VALUES.map((priority) => (
                     <MenuItem key={priority} value={priority}>
@@ -168,12 +174,15 @@ export function TaskForm({
               error={Boolean(errors.assigneeId)}
               disabled={isSubmitting || assigneesLoading}
             >
-              <InputLabel id="task-assignee-label">Assignee</InputLabel>
+              <InputLabel id="task-assignee-label" shrink>
+                Assignee
+              </InputLabel>
               <Select
                 {...field}
                 labelId="task-assignee-label"
                 label="Assignee"
                 displayEmpty
+                notched
               >
                 <MenuItem value="">
                   <em>Unassigned</em>

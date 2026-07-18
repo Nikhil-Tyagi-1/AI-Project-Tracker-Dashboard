@@ -104,7 +104,9 @@ export function KanbanToolbar({
           sx={{ minWidth: { xs: "100%", sm: 280 }, maxWidth: 420 }}
           disabled={disabled || projectsLoading}
         >
-          <InputLabel id="kanban-project-label">Project</InputLabel>
+          <InputLabel id="kanban-project-label" shrink>
+            Project
+          </InputLabel>
           <Select
             labelId="kanban-project-label"
             id="kanban-project-select"
@@ -118,6 +120,7 @@ export function KanbanToolbar({
             label="Project"
             onChange={handleProjectChange}
             displayEmpty
+            notched
           >
             <MenuItem value="">
               <em>Select a project</em>
@@ -197,13 +200,16 @@ export function KanbanToolbar({
         }}
       >
         <FormControl size="small" fullWidth disabled={!boardScoped}>
-          <InputLabel id="kanban-priority-filter-label">Priority</InputLabel>
+          <InputLabel id="kanban-priority-filter-label" shrink>
+            Priority
+          </InputLabel>
           <Select
             labelId="kanban-priority-filter-label"
             label="Priority"
             value={priority}
             onChange={handlePriorityChange}
             displayEmpty
+            notched
           >
             <MenuItem value="">
               <em>All priorities</em>
@@ -217,13 +223,16 @@ export function KanbanToolbar({
         </FormControl>
 
         <FormControl size="small" fullWidth disabled={!boardScoped}>
-          <InputLabel id="kanban-assignee-filter-label">Assignee</InputLabel>
+          <InputLabel id="kanban-assignee-filter-label" shrink>
+            Assignee
+          </InputLabel>
           <Select
             labelId="kanban-assignee-filter-label"
             label="Assignee"
             value={assigneeId}
             onChange={handleAssigneeChange}
             displayEmpty
+            notched
           >
             <MenuItem value="">
               <em>All assignees</em>

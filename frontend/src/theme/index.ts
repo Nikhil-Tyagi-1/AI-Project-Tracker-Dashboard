@@ -51,6 +51,11 @@ export const theme = createTheme({
         disableRipple: false,
       },
     },
+    MuiChip: {
+      defaultProps: {
+        size: "small",
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
