@@ -5,6 +5,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 import healthRouter from "./routes/health";
 import projectRouter from "./routes/project";
+import taskRouter from "./routes/task";
 
 /**
  * Express application factory.
@@ -27,6 +28,7 @@ export function createApp() {
 
   app.use("/api", healthRouter);
   app.use("/api/projects", projectRouter);
+  app.use("/api/tasks", taskRouter);
 
   // Must be registered after all routes.
   app.use(errorHandler);
