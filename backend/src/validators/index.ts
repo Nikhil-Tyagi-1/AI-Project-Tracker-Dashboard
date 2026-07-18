@@ -11,3 +11,4 @@ export const nonEmptyString = (max: number, min = 1) =>
 
 // Feature validators
 export * from "./project";
+export * from "./task";

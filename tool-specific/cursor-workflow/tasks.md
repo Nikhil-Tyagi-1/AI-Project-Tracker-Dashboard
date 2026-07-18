@@ -55,7 +55,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 3 — Tasks API
 
-- [ ] `[BE]` Create Zod validators for task create/update bodies and list query params
+- [x] `[BE]` Create Zod validators for task create/update bodies and list query params
 - [ ] `[BE]` Implement `TaskService` (list by project/filters, getById, create, update, archive, restore)
 - [ ] `[BE]` Reject tasks linked to missing or archived projects
 - [ ] `[BE]` Support status + `sortOrder` updates for Kanban persistence
