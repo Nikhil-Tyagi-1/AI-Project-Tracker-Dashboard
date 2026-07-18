@@ -25,7 +25,9 @@ Guides for AI Project Tracker Pro UI modules. Each doc follows the same outline:
 
 | Document | Path |
 |----------|------|
+| Docs index | [`../README.md`](../README.md) |
 | Known limitations | [`../known-limitations.md`](../known-limitations.md) |
 | Future enhancements | [`../future-enhancements.md`](../future-enhancements.md) |
 | Reflection | [`../../reflection.md`](../../reflection.md) |
 | PR description | [`../../pull-request-description.md`](../../pull-request-description.md) |
+| Prompt history | [`../../prompt-history/README.md`](../../prompt-history/README.md) |

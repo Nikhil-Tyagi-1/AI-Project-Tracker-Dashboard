@@ -365,12 +365,12 @@ Quick reference:
 | `GET` | `/api/health` | Health check |
 | `GET` / `POST` | `/api/projects` | List / create projects |
 | `GET` / `PATCH` | `/api/projects/:id` | Get / update project |
-| `POST` | `/api/projects/:id/archive` | Soft-archive project |
-| `POST` | `/api/projects/:id/restore` | Restore project |
+| `PATCH` | `/api/projects/:id/archive` | Soft-archive project |
+| `PATCH` | `/api/projects/:id/restore` | Restore project |
 | `GET` / `POST` | `/api/tasks` | List / create tasks |
 | `GET` / `PATCH` | `/api/tasks/:id` | Get / update task |
-| `POST` | `/api/tasks/:id/archive` | Soft-archive task |
-| `POST` | `/api/tasks/:id/restore` | Restore task |
+| `PATCH` | `/api/tasks/:id/archive` | Soft-archive task |
+| `PATCH` | `/api/tasks/:id/restore` | Restore task |
 | `GET` | `/api/dashboard/summary` | Metric cards + chart series |
 | `GET` | `/api/dashboard/insights` | Mock AI insight cards |
 
@@ -380,6 +380,7 @@ Quick reference:
 
 | Document | Purpose |
 |----------|---------|
+| [docs/README.md](docs/README.md) | Documentation index |
 | [docs/database.md](docs/database.md) | Entities, migrate, seed |
 | [docs/testing.md](docs/testing.md) | Unit/integration tests and ephemeral DB |
 | [docs/frontend/conventions.md](docs/frontend/conventions.md) | Frontend folder & theme conventions |
@@ -393,6 +394,7 @@ Quick reference:
 | [docs/future-enhancements.md](docs/future-enhancements.md) | Post-MVP roadmap |
 | [reflection.md](reflection.md) | Architecture decisions & lessons |
 | [pull-request-description.md](pull-request-description.md) | Handoff PR template |
+| [prompt-history/README.md](prompt-history/README.md) | Development prompts used with AI |
 | [tool-specific/cursor-workflow/project-context.md](tool-specific/cursor-workflow/project-context.md) | Business context & architecture |
 | [tool-specific/cursor-workflow/spec.md](tool-specific/cursor-workflow/spec.md) | Software specification |
 | [tool-specific/cursor-workflow/acceptance-criteria.md](tool-specific/cursor-workflow/acceptance-criteria.md) | Given/When/Then acceptance criteria |
@@ -423,15 +425,15 @@ curl -s http://localhost:4000/api/health
 
 ## Screenshots
 
-> Placeholders — add PNGs under `docs/screenshots/` and update the links below.
+UI captures are optional for evaluation. When available, place PNGs under [`docs/screenshots/`](docs/screenshots/README.md):
 
-| Screen | Preview |
-|--------|---------|
-| Dashboard | ![Dashboard](docs/screenshots/dashboard.png) |
-| Projects list | ![Projects](docs/screenshots/projects.png) |
-| Project detail | ![Project detail](docs/screenshots/project-detail.png) |
-| Kanban board | ![Kanban](docs/screenshots/kanban.png) |
-| Analytics | ![Analytics](docs/screenshots/analytics.png) |
+| Screen | Suggested file |
+|--------|----------------|
+| Dashboard | `docs/screenshots/dashboard.png` |
+| Projects list | `docs/screenshots/projects.png` |
+| Project detail | `docs/screenshots/project-detail.png` |
+| Kanban board | `docs/screenshots/kanban.png` |
+| Analytics | `docs/screenshots/analytics.png` |
 
 ---
 

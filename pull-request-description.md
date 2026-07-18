@@ -88,7 +88,8 @@ Covered areas include: project/task validators, project/task/dashboard API integ
 - [x] API + feature documentation
 - [x] Known limitations and future enhancements documented
 - [x] No secrets committed (`.env.example` placeholders only)
-- [ ] Milestone 11 production build / deploy notes (follow-up)
+- [ ] Screenshots attached (optional — see `docs/screenshots/`)
+- [ ] Milestone 11 production deploy notes (follow-up)
 - [ ] Stretch Auth (optional follow-up)
 
 ---
@@ -113,7 +114,9 @@ Short list for reviewers; full detail in [`docs/known-limitations.md`](docs/know
 | Doc | Link |
 |-----|------|
 | Setup | [`README.md`](README.md) |
+| Docs index | [`docs/README.md`](docs/README.md) |
 | Reflection | [`reflection.md`](reflection.md) |
 | Limitations | [`docs/known-limitations.md`](docs/known-limitations.md) |
 | Future work | [`docs/future-enhancements.md`](docs/future-enhancements.md) |
+| Prompt history | [`prompt-history/README.md`](prompt-history/README.md) |
 | Spec / AC / tasks | [`tool-specific/cursor-workflow/`](tool-specific/cursor-workflow/) |

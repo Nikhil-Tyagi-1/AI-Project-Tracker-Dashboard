@@ -1,6 +1,6 @@
 # Reflection — AI Project Tracker Pro
 
-Developer handoff notes on architecture choices, challenges, trade-offs, and what we would do next. Companion docs: [`docs/known-limitations.md`](docs/known-limitations.md), [`docs/future-enhancements.md`](docs/future-enhancements.md), [`tool-specific/cursor-workflow/spec.md`](tool-specific/cursor-workflow/spec.md).
+Developer handoff notes on architecture choices, challenges, trade-offs, and what we would do next. Companion docs: [`docs/README.md`](docs/README.md), [`docs/known-limitations.md`](docs/known-limitations.md), [`docs/future-enhancements.md`](docs/future-enhancements.md), [`tool-specific/cursor-workflow/spec.md`](tool-specific/cursor-workflow/spec.md).
 
 > **Scope note:** Authentication remains **outside the MVP** unless Stretch Auth (Milestone 12) is completed. The reflection below assumes the delivered MVP (Milestones 0–10).
 
@@ -104,6 +104,8 @@ Near-term engineering improvements (see also [`docs/future-enhancements.md`](doc
 | [`spec.md`](tool-specific/cursor-workflow/spec.md) | Requirements and future enhancements §16 |
 | [`acceptance-criteria.md`](tool-specific/cursor-workflow/acceptance-criteria.md) | Definition of done |
 | [`tasks.md`](tool-specific/cursor-workflow/tasks.md) | Milestone breakdown |
+| [`docs/README.md`](docs/README.md) | Documentation index |
 | [`docs/known-limitations.md`](docs/known-limitations.md) | Current MVP constraints |
 | [`docs/future-enhancements.md`](docs/future-enhancements.md) | Planned product direction |
 | [`pull-request-description.md`](pull-request-description.md) | PR-ready summary for reviewers |
+| [`prompt-history/README.md`](prompt-history/README.md) | Prompts used during AI-assisted development |

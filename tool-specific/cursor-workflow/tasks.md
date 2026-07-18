@@ -169,7 +169,7 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[DOC]` Note Stretch Auth as explicitly out of MVP unless completed — noted in feature docs and `docs/database.md`
 - [x] `[DOC]` Record known limitations and future enhancements summary — `docs/known-limitations.md`, `docs/future-enhancements.md`
 - [x] `[DOC]` Create meaningful Git commits after each completed milestone
-- [ ] `[DOC]` Maintain prompt-history folder
+- [x] `[DOC]` Maintain prompt-history folder — see `prompt-history/README.md` (71 prompts, grouped by milestone)
 - [x] `[DOC]` Add reflection.md
 - [x] `[DOC]` Add pull-request-description.md
 
@@ -177,14 +177,14 @@ Each task is independently completable. Complete milestones in order unless a ta
 
 ## Milestone 11 — Deployment readiness
 
-- [ ] `[OPS]` Production build scripts for frontend and backend succeed locally
-- [ ] `[OPS]` Document recommended process start order (migrate → seed → API → web)
-- [ ] `[OPS]` Configure frontend production API base URL via env
+- [x] `[OPS]` Production build scripts for frontend and backend succeed locally — verified `npm run build:backend` + `npm run build:frontend` (2026-07-18)
+- [x] `[OPS]` Document recommended process start order (migrate → seed → API → web) — covered in root README
+- [x] `[OPS]` Configure frontend production API base URL via env — `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.example`
 - [ ] `[OPS]` Verify SQLite path is configurable and writable in target environment
 - [ ] `[OPS]` Add simple deployment notes (e.g., single VM/container, or separate FE/BE hosts)
 - [ ] `[OPS]` Optional: Dockerfile(s) or compose file for API + web (justify if added)
 - [ ] `[OPS]` Smoke-test deployed/local-prod-mode flow: list projects, create task, move Kanban card, open dashboard
-- [ ] `[DOC]` Add troubleshooting section (port conflicts, migration failures, CORS if applicable)
+- [x] `[DOC]` Add troubleshooting section (port conflicts, migration failures, CORS if applicable) — root README
 - [ ] `[TEST]` Final acceptance pass against `spec.md` §15 checklist
 
 ---
