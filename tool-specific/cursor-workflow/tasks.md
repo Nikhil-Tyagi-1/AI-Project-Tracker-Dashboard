@@ -102,8 +102,8 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Add debounced search input (`q`) with clear control
 - [x] `[FE]` Add filters for status, priority, owner + reset filters control
 - [x] `[FE]` Add sort controls (`sortBy`, `sortOrder`)
-- [ ] `[FE]` Build Create Project form page with React Hook Form + Zod
-- [ ] `[FE]` Build Edit Project form page reusing the same form component
+- [x] `[FE]` Build Create Project form page with React Hook Form + Zod
+- [x] `[FE]` Build Edit Project form page reusing the same form component
 - [ ] `[FE]` Build Project Details page (metadata, risk notes, task summary, link to board)
 - [ ] `[FE]` Wire archive/restore with confirmation dialog + toasts
 - [ ] `[FE]` Implement loading, empty, and error states for list/detail/forms
