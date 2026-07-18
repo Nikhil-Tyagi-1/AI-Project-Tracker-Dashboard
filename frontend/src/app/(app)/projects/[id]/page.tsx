@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/components/layout";
+import { ProjectDetailView } from "@/features/projects";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -11,18 +11,11 @@ type ProjectDetailPageProps = {
 };
 
 /**
- * Project detail placeholder — full metadata view is implemented later in Milestone 6.
- * Present so list row/card navigation has a valid destination.
+ * Project detail route — metadata, task summary, edit/archive/restore.
  */
 export default async function ProjectDetailPage({
   params,
 }: ProjectDetailPageProps) {
   const { id } = await params;
-
-  return (
-    <PagePlaceholder
-      title="Project Details"
-      description={`Detail view for project ${id} will show metadata, risk notes, task summary, and a link to the Kanban board in a later step.`}
-    />
-  );
+  return <ProjectDetailView projectId={id} />;
 }

@@ -1,6 +1,7 @@
 export { ProjectsListView } from "@/features/projects/ProjectsListView";
 export { ProjectCreateView } from "@/features/projects/ProjectCreateView";
 export { ProjectEditView } from "@/features/projects/ProjectEditView";
+export { ProjectDetailView } from "@/features/projects/ProjectDetailView";
 export { ProjectForm } from "@/features/projects/components/ProjectForm";
 export { ProjectStatusChip } from "@/features/projects/components/ProjectStatusChip";
 export { ProjectPriorityChip } from "@/features/projects/components/ProjectPriorityChip";

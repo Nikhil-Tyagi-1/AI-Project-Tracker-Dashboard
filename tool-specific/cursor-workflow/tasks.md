@@ -104,9 +104,9 @@ Each task is independently completable. Complete milestones in order unless a ta
 - [x] `[FE]` Add sort controls (`sortBy`, `sortOrder`)
 - [x] `[FE]` Build Create Project form page with React Hook Form + Zod
 - [x] `[FE]` Build Edit Project form page reusing the same form component
-- [ ] `[FE]` Build Project Details page (metadata, risk notes, task summary, link to board)
-- [ ] `[FE]` Wire archive/restore with confirmation dialog + toasts
-- [ ] `[FE]` Implement loading, empty, and error states for list/detail/forms
+- [x] `[FE]` Build Project Details page (metadata, risk notes, task summary, link to board)
+- [x] `[FE]` Wire archive/restore with confirmation dialog + toasts
+- [x] `[FE]` Implement loading, empty, and error states for list/detail/forms
 - [ ] `[TEST]` Component or integration tests for project form validation errors
 - [ ] `[DOC]` Document Projects feature usage and main flows
 

@@ -10,7 +10,12 @@ export const apiRoutes = {
     archive: (id: string) => `/projects/${id}/archive`,
     restore: (id: string) => `/projects/${id}/restore`,
   },
-  tasks: "/tasks",
+  tasks: {
+    root: "/tasks",
+    byId: (id: string) => `/tasks/${id}`,
+    archive: (id: string) => `/tasks/${id}/archive`,
+    restore: (id: string) => `/tasks/${id}/restore`,
+  },
   dashboard: {
     summary: "/dashboard/summary",
     insights: "/dashboard/insights",

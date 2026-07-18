@@ -23,3 +23,11 @@ export type {
   SortOrder,
   UpdateProjectInput,
 } from "@/types/project";
+export type {
+  Task,
+  TaskAssignee,
+  TaskListParams,
+  TaskListResult,
+  TaskProjectSummary,
+  TaskStatusSummary,
+} from "@/types/task";

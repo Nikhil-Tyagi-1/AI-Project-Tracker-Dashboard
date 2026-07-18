@@ -9,3 +9,4 @@ export {
   restoreProject,
   updateProject,
 } from "@/services/api/projects";
+export { getTasks } from "@/services/api/tasks";
